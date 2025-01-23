@@ -48,6 +48,7 @@ BP = brickpi3.BrickPi3() # Create an instance of the BrickPi3 class. BP will be 
 motorR = BP.PORT_B # right motor
 motorL = BP.PORT_C # left motor
 speed = 200 # range is -255 to 255, make lower if bot it too fast
+boost_speed = 255
 #Move Forward
 
 def fwd():
@@ -56,13 +57,13 @@ def fwd():
 
 #Move Left
 def left():
-        BP.set_motor_power(motorR, speed)
-        BP.set_motor_power(motorL, -speed)
+        BP.set_motor_power(motorR, speed*0.7)
+        BP.set_motor_power(motorL, -speed*0.7)
 
 #Move Right
 def right():
-        BP.set_motor_power(motorR, -speed)
-        BP.set_motor_power(motorL, speed)
+        BP.set_motor_power(motorR, -speed*0.7)
+        BP.set_motor_power(motorL, speed*.07)
 
 #Move backward
 def back():
@@ -74,26 +75,38 @@ def stop():
         BP.set_motor_power(motorR, 0)
         BP.set_motor_power(motorL, 0)
 
-while True:
-        inp = stdscr.getkey() #Take input from the terminal
-        #Move the bot
-        if inp == 'w':
-                fwd()
-                print("fwd")
+def boost():
+        BP.set_motor_power(motorR, boost_speed)
+        BP.set_motor_power(motorL, boost_speed)
 
-        elif inp=='a' :
-                left()
-                print("left")
+try:
+        while True:
+                inp = stdscr.getkey() #Take input from the terminal
+                #Move the bot
+                if inp == 's':
+                        fwd()
+                        print("fwd")
 
-        elif inp=='d':
-                right()
-                print("right")
+                elif inp=='a' :
+                        left()
+                        print("left")
 
-        elif inp=='s':
-                back()
-                print("back")
+                elif inp=='d':
+                        right()
+                        print("right")
 
-        elif inp=='x':
-                stop()
+                elif inp=='w':
+                        back()
+                        print("back")
 
-        time.sleep(.01)         # sleep for 10 ms
+                elif inp=='/' or inp=='x':
+                        stop()
+                        print("stop")
+
+                elif inp=='b':
+                        boost()
+                        print("boost")
+                time.sleep(.01)         # sleep for 10 ms
+except KeyboardInterrupt:
+        stop()
+        print("Keyboard Interrupt")
