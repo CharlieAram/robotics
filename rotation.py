@@ -14,6 +14,7 @@ def rotate_multiple(port, rots, wait=0.5, divisions=3, opposite = None):
             if opposite:
                 BP.set_motor_position_relative(opposite, -360 / divisions)
             time.sleep(wait)
+        rots -= 1
     BP.set_motor_position_relative(port, 360 * rots)
     if opposite:
         BP.set_motor_position_relative(opposite, -360 * rots)
