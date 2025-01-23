@@ -9,14 +9,15 @@ motorL = BP.PORT_C # left motor
 ROTS_FWD = 4.244
 ROTS_TURN = 1.142
 
-BP.set_motor_position_relative(motorL, 360 * ROTS_TURN)
-BP.set_motor_position_relative(motorR, -360 * ROTS_TURN)
+for _ in range(4):
+    BP.set_motor_position_relative(motorL, 360 * ROTS_FWD)
+    BP.set_motor_position_relative(motorR, 360 * ROTS_FWD)
 
-time.sleep(1)
-print("Finished rotating")
+    time.sleep(2)
+    print("Finished fwd")
 
-BP.set_motor_position_relative(motorL, 360 * ROTS_FWD)
-BP.set_motor_position_relative(motorR, 360 * ROTS_FWD)
+    BP.set_motor_position_relative(motorL, 360 * ROTS_TURN)
+    BP.set_motor_position_relative(motorR, -360 * ROTS_TURN)
 
-time.sleep(2)
-print("Finished fwd")
+    time.sleep(1)
+    print("Finished rotating")
