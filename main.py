@@ -48,7 +48,8 @@ BP = brickpi3.BrickPi3() # Create an instance of the BrickPi3 class. BP will be 
 motorR = BP.PORT_B # right motor
 motorL = BP.PORT_C # left motor
 speed = 200 # range is -255 to 255, make lower if bot it too fast
-boost_speed = 255
+boost_speed = 230
+turn_speed = 180
 #Move Forward
 
 def fwd():
@@ -62,8 +63,8 @@ def left():
 
 #Move Right
 def right():
-        BP.set_motor_power(motorR, -speed)
-        BP.set_motor_power(motorL, speed)
+        BP.set_motor_power(motorR, -turn_speed)
+        BP.set_motor_power(motorL, turn_speed)
 
 #Move backward
 def back():
