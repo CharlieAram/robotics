@@ -47,9 +47,9 @@ curses.noecho()
 BP = brickpi3.BrickPi3() # Create an instance of the BrickPi3 class. BP will be the BrickPi3 object.
 motorR = BP.PORT_B # right motor
 motorL = BP.PORT_C # left motor
-speed = 200 # range is -255 to 255, make lower if bot it too fast
-boost_speed = 210
-turn_speed = 100
+speed = 170 # range is -255 to 255, make lower if bot it too fast
+boost_speed = 100
+turn_speed = 230
 #Move Forward
 
 def fwd(power: int = speed):
@@ -58,8 +58,8 @@ def fwd(power: int = speed):
 
 #Move Left
 def left():
-        BP.set_motor_power(motorR, speed)
-        BP.set_motor_power(motorL, -speed)
+        BP.set_motor_power(motorR, turn_speed)
+        BP.set_motor_power(motorL, -turn_speed)
 
 #Move Right
 def right():
@@ -109,5 +109,5 @@ try:
                         print("boost")
                 time.sleep(.01)         # sleep for 10 ms
 except KeyboardInterrupt:
-        stop()
+        BP.reset_all()
         print("Keyboard Interrupt")
