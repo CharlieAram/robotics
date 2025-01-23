@@ -1,7 +1,7 @@
 import brickpi3 #import BrickPi.py file to use BrickPi operations
-y
-import curses   # import curses for text processing
 
+import curses   # import curses for text processing
+import time
 # set up curses interface
 
 stdscr = curses.initscr()
@@ -27,12 +27,15 @@ if __name__ == "__main__":
             print("degree: ", degree)
 
             input("Press Enter to continue...")
-            inp = stdscr.getkey() #Take input from the terminal
+            # inp = stdscr.getkey() #Take input from the terminal
 
-            if inp == 'q':
-                break
-            else:
-                pass
+            # if inp == 'q':
+            #     break
+            # else:
+            #     pass
+
+            time.sleep(5)
+
 
     except KeyboardInterrupt: # except the program gets interrupted by Ctrl+C on the keyboard.
         stop()
