@@ -11,3 +11,12 @@ ROTS_TURN = 1.142
 
 BP.set_motor_position_relative(motorL, 360 * ROTS_TURN)
 BP.set_motor_position_relative(motorR, -360 * ROTS_TURN)
+
+time.sleep(1)
+print("Finished rotating")
+
+BP.set_motor_position_relative(motorL, 360 * ROTS_FWD)
+BP.set_motor_position_relative(motorR, 360 * ROTS_FWD)
+
+time.sleep(2)
+print("Finished fwd")
