@@ -17,6 +17,7 @@ def rotate_multiple(port, rots, wait=0.5, divisions=3, opposite = None):
     BP.set_motor_position_relative(port, 360 * rots)
     if opposite:
         BP.set_motor_position_relative(opposite, -360 * rots)
+    time.sleep(wait)
     
 
 def forward(rots: float):
@@ -30,5 +31,5 @@ ROTS_FWD = 4.244
 ROTS_TURN = 1.142
 
 for _ in range(4):
-    forward(ROTS_FWD / 2)
-    turn(ROTS_TURN / 2)
+    forward(ROTS_FWD)
+    turn(ROTS_TURN)
