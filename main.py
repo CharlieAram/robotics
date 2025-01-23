@@ -57,13 +57,13 @@ def fwd():
 
 #Move Left
 def left():
-        BP.set_motor_power(motorR, speed*0.7)
-        BP.set_motor_power(motorL, -speed*0.7)
+        BP.set_motor_power(motorR, speed)
+        BP.set_motor_power(motorL, -speed)
 
 #Move Right
 def right():
-        BP.set_motor_power(motorR, -speed*0.7)
-        BP.set_motor_power(motorL, speed*.07)
+        BP.set_motor_power(motorR, -speed)
+        BP.set_motor_power(motorL, speed)
 
 #Move backward
 def back():
@@ -76,8 +76,8 @@ def stop():
         BP.set_motor_power(motorL, 0)
 
 def boost():
-        BP.set_motor_power(motorR, boost_speed)
-        BP.set_motor_power(motorL, boost_speed)
+        BP.set_motor_power(motorR, -boost_speed)
+        BP.set_motor_power(motorL, -boost_speed)
 
 try:
         while True:
