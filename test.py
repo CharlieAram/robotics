@@ -12,15 +12,17 @@ ROTS_FWD = 4.244 + diff
 ROTS_TURN = 1.142 - 0.015
 BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
 BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
-BP.set_motor_power(motorL, 20)
-BP.set_motor_power(motorR, 20)
+
 for _ in range(4):
+    BP.set_motor_power(motorL, 20)
+    BP.set_motor_power(motorR, 20)
     BP.set_motor_position_relative(motorL, 360 * ROTS_FWD)
     BP.set_motor_position_relative(motorR, 360 * ROTS_FWD)
 
     time.sleep(2)
     print("Finished fwd")
-
+    BP.set_motor_power(motorL, 20)
+    BP.set_motor_power(motorR, 20)
     BP.set_motor_position_relative(motorL, 360 * ROTS_TURN)
     BP.set_motor_position_relative(motorR, -360 * ROTS_TURN)
 
