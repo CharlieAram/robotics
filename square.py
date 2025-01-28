@@ -39,4 +39,5 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt: # except the program gets interrupted by Ctrl+C on the keyboard.
         stop()
+        curses.endwin()  # Reset terminal
         print("Keyboard Interrupt")

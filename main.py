@@ -110,4 +110,5 @@ try:
                 time.sleep(.01)         # sleep for 10 ms
 except KeyboardInterrupt:
         BP.reset_all()
+        curses.endwin()  # Reset terminal
         print("Keyboard Interrupt")
