@@ -11,6 +11,8 @@ motorL = BP.PORT_C # left motor
 ROTS_FWD = 4.244 + diff
 ROTS_TURN = 1.142 - 0.015
 
+BP.set_motor_power(motorL, 20)
+BP.set_motor_power(motorR, 20)
 BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
 BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
 for _ in range(4):
