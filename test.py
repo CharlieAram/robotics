@@ -2,7 +2,7 @@ import time
 import brickpi3
 
 import sys
-diff = eval(" ".join(sys.argv[1:])) if len(sys.argv)>1 else 0
+SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv)>1 else 2
 
 BP = brickpi3.BrickPi3() # Create an instance of the BrickPi3 class. BP will be the BrickPi3 object.
 motorR = BP.PORT_B # right motor
@@ -14,8 +14,6 @@ ROTS_TURN = 1.142 - 0.015
 ROTST = [ROTS_TURN] * 4
 ROTST[1] *= 1.045
 
-
-
 try:
 
     for ROTS_FWD,ROTS_TURN in zip(ROTS,ROTST):
@@ -25,8 +23,8 @@ try:
         targetL = 360*ROTS_FWD
         targetR = 360*ROTS_FWD
 
-        BP.set_motor_power(motorL, 20)
-        BP.set_motor_power(motorR, 20)
+        BP.set_motor_power(motorL, 20 * SCALE)
+        BP.set_motor_power(motorR, 20 * SCALE)
 
         l=BP.get_motor_encoder(motorL)
         r=BP.get_motor_encoder(motorR)
@@ -35,8 +33,8 @@ try:
             if l < targetL and r < targetR and time.time() - t > 0.4:
                 ratio = (l-r) / 10
                 print(ratio)
-                BP.set_motor_power(motorL, 20 - ratio)
-                BP.set_motor_power(motorR, 20 + ratio)
+                BP.set_motor_power(motorL, (20 - ratio) * SCALE)
+                BP.set_motor_power(motorR, (20 + ratio) * SCALE)
                 t = time.time()
 
             l=BP.get_motor_encoder(motorL)
@@ -51,8 +49,8 @@ try:
         BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
         BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
 
-        BP.set_motor_power(motorL, 20)
-        BP.set_motor_power(motorR, -20)
+        BP.set_motor_power(motorL, 20 * SCALE)
+        BP.set_motor_power(motorR, -20 * SCALE)
 
         targetL = ROTS_TURN * 360
         targetR = ROTS_TURN * 360
@@ -65,8 +63,8 @@ try:
             if l < targetL and r < targetR and time.time() - t > 0.4:
                 ratio = (l-r) / 10
                 print(ratio)
-                BP.set_motor_power(motorL, 20 - ratio)
-                BP.set_motor_power(motorR, - (20 + ratio))
+                BP.set_motor_power(motorL, (20 - ratio) * SCALE)
+                BP.set_motor_power(motorR, - (20 + ratio) * SCALE)
                 t = time.time()
 
             l=BP.get_motor_encoder(motorL)
