@@ -54,8 +54,8 @@ try:
         BP.set_motor_power(motorL, 20)
         BP.set_motor_power(motorR, -20)
 
-        targetL = ROTS_TURN
-        targetR = ROTS_TURN
+        targetL = ROTS_TURN * 360
+        targetR = ROTS_TURN * 360
 
         l=BP.get_motor_encoder(motorL)
         r=-BP.get_motor_encoder(motorR)
