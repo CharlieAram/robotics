@@ -25,14 +25,22 @@ try:
         BP.set_motor_position_relative(motorL, 360 * ROTS_FWD)
         BP.set_motor_position_relative(motorR, 360 * ROTS_FWD)
 
-        time.sleep(4)
+        for i in range(10):
+            print(BP.get_motor_encoder(motorL))
+            print(BP.get_motor_encoder(motorR))
+            time.sleep(0.4)
         print("Finished fwd")
+
+
         BP.set_motor_limits(motorL, power=POWER)
         BP.set_motor_limits(motorR, power=POWER)
         BP.set_motor_position_relative(motorL, 360 * ROTS_TURN)
         BP.set_motor_position_relative(motorR, -360 * ROTS_TURN)
+        for i in range(5):
+            print(BP.get_motor_encoder(motorL))
+            print(BP.get_motor_encoder(motorR))
+            time.sleep(0.4)
 
-        time.sleep(2)
         print("Finished rotating")
 except:
     print("Error")
