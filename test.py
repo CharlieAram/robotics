@@ -17,24 +17,36 @@ ROTST[1] *= 1.045
 
 
 try:
-    BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
-    BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
 
     for ROTS_FWD,ROTS_TURN in zip(ROTS,ROTST):
-        targetL = BP.get_motor_encoder(motorL) + 360*ROTS_FWD
-        targetR = BP.get_motor_encoder(motorR) + 360*ROTS_FWD
+        BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
+        BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
+
+        targetL = 360*ROTS_FWD
+        targetR = 360*ROTS_FWD
 
         BP.set_motor_power(motorL, 20)
-        BP.set_motor_power( motorR, 20)
+        BP.set_motor_power(motorR, 20)
 
-        while (BP.get_motor_encoder(motorL) < targetL or
-               BP.get_motor_encoder(motorR) < targetR):
-            pass
+        l=BP.get_motor_encoder(motorL)
+        r=BP.get_motor_encoder(motorR)
+        while (l < targetL or r < targetR):
+            if l < targetL and r < targetR and l + r > 60:
+                ratio = (l-r)
+                print(ratio)
+                BP.set_motor_power(motorL, 20 - 10 * ratio)
+                BP.set_motor_power(motorR, 20 + 10 * ratio)
+
+            l=BP.get_motor_encoder(motorL)
+            r=BP.get_motor_encoder(motorR)
 
         print("Finished fwd")
 
-        targetL = BP.get_motor_encoder(motorL) + 360*ROTS_TURN
-        targetR = BP.get_motor_encoder(motorR) - 360*ROTS_TURN
+        BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
+        BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
+
+        targetL = + 360*ROTS_TURN
+        targetR = - 360*ROTS_TURN
 
         BP.set_motor_power(motorL, 20)
         BP.set_motor_power(motorR, -20)
