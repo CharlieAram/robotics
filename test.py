@@ -19,12 +19,12 @@ for _ in range(4):
     BP.set_motor_position_relative(motorL, 360 * ROTS_FWD)
     BP.set_motor_position_relative(motorR, 360 * ROTS_FWD)
 
-    time.sleep(8)
+    time.sleep(10)
     print("Finished fwd")
     BP.set_motor_limits(motorL, power=20)
     BP.set_motor_limits(motorR, power=20)
     BP.set_motor_position_relative(motorL, 360 * ROTS_TURN)
     BP.set_motor_position_relative(motorR, -360 * ROTS_TURN)
 
-    time.sleep(2)
+    time.sleep(4.5)
     print("Finished rotating")
