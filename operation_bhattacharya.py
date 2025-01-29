@@ -2,7 +2,7 @@ import time
 import brickpi3
 
 import sys
-diff = eval(" ".join(sys.argv[1:])) if len(sys.argv)>1 else 0
+_ = eval(" ".join(sys.argv[1:])) if len(sys.argv)>1 else 0
 
 BP = brickpi3.BrickPi3() # Create an instance of the BrickPi3 class. BP will be the BrickPi3 object.
 motorR = BP.PORT_B # right motor
@@ -25,10 +25,14 @@ try:
     for ROTS_FWD,ROTS_TURN in zip(ROTS,ROTST):
 
         for i in range(FWD_STEPS):
-            BP.set_motor_position_relative(motorL, (360 * ROTS_FWD) / FWD_STEPS)
-            BP.set_motor_position_relative(motorR, (360 * ROTS_FWD) / FWD_STEPS)
-            print(BP.get_motor_encoder(motorL))
-            print(BP.get_motor_encoder(motorR))
+            diff = BP.get_motor_encoder(motorL) - BP.get_motor_encoder(motorR)
+            print(BP.get_motor_encoder(motorL), BP.get_motor_encoder(motorR), diff)
+            if diff > 0:
+                BP.set_motor_position_relative(motorL, (360 * ROTS_FWD) / FWD_STEPS)
+                BP.set_motor_position_relative(motorR, ((360 * ROTS_FWD) / FWD_STEPS) + diff)
+            else:
+                BP.set_motor_position_relative(motorL, ((360 * ROTS_FWD) / FWD_STEPS) + diff)
+                BP.set_motor_position_relative(motorR, (360 * ROTS_FWD) / FWD_STEPS)
             time.sleep(10/FWD_STEPS)
         print("Finished fwd")
 
