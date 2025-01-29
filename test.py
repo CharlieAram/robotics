@@ -51,25 +51,22 @@ try:
         BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
         BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
 
-        targetL = + 360*ROTS_TURN
-        targetR = - 360*ROTS_TURN
-
-        BP.set_motor_power(motorL, 20)
-        BP.set_motor_power(motorR, -20)
-
         l=BP.get_motor_encoder(motorL)
-        r=BP.get_motor_encoder(motorR)
+        r=-BP.get_motor_encoder(motorR)
         t = time.time()
-        while (l < targetL or r > targetR):
-            if l < targetL and r > targetR and l + (-r) > 60 and time.time() - t > 0.4:
-                ratio = (l-(-r)) / 10
+        while (l < targetL or r < targetR):
+            if l < targetL and r < targetR and l + r > 60 and time.time() - t > 0.4:
+                ratio = (l-r) / 10
                 print(ratio)
                 BP.set_motor_power(motorL, 20 - ratio)
-                BP.set_motor_power(motorR, -(20 + ratio))
+                BP.set_motor_power(motorR, - (20 + ratio))
                 t = time.time()
+
+            l=BP.get_motor_encoder(motorL)
+            r=BP.get_motor_encoder(motorR)
             if l >= targetL:
                 BP.set_motor_power(motorL, 0)
-            if r <= targetR:
+            if r >= targetR:
                 BP.set_motor_power(motorR, 0)
         print("Finished rotating")
 except:
