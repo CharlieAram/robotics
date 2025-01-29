@@ -14,37 +14,26 @@ ROTS_TURN = 1.142 - 0.015
 ROTST = [ROTS_TURN] * 4
 ROTST[1] *= 1.045
 
-
-
 try:
     BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
     BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
 
     for ROTS_FWD,ROTS_TURN in zip(ROTS,ROTST):
-        targetL = BP.get_motor_encoder(motorL) + 360*ROTS_FWD
-        targetR = BP.get_motor_encoder(motorR) + 360*ROTS_FWD
+        #BP.set_motor_limits(motorL, power=20)
+        #BP.set_motor_limits(motorR, power=20)
+        BP.set_motor_position_relative(motorL, 360 * ROTS_FWD)
+        BP.set_motor_position_relative(motorR, 360 * ROTS_FWD)
 
-        BP.set_motor_power(motorL & motorR, 20)
-
-        while (BP.get_motor_encoder(motorL) < targetL and 
-               BP.get_motor_encoder(motorR) < targetR):
-            pass
-
+        time.sleep(4)
         print("Finished fwd")
+        #BP.set_motor_limits(motorL, power=20)
+        #BP.set_motor_limits(motorR, power=20*RL_INBALANCE_OFFSET)
+        BP.set_motor_position_relative(motorL, 360 * ROTS_TURN)
+        BP.set_motor_position_relative(motorR, -360 * ROTS_TURN)
 
-        targetL = BP.get_motor_encoder(motorL) + 360*ROTS_TURN
-        targetR = BP.get_motor_encoder(motorR) - 360*ROTS_TURN
-
-        BP.set_motor_power(motorL, 20)
-        BP.set_motor_power(motorR, -20)
-
-        while (BP.get_motor_encoder(motorL) < targetL and 
-               BP.get_motor_encoder(motorR) < targetR):
-            pass
-
+        time.sleep(2)
         print("Finished rotating")
 except Exception as e:
     print("Error: ", e)
 
-BP.reset_all()
 BP.reset_all()
