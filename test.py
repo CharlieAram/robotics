@@ -26,7 +26,7 @@ try:
 
         BP.set_motor_power(motorL & motorR, 20)
 
-        while (BP.get_motor_encoder(motorL) < targetL and 
+        while (BP.get_motor_encoder(motorL) < targetL or
                BP.get_motor_encoder(motorR) < targetR):
             pass
 
@@ -38,13 +38,12 @@ try:
         BP.set_motor_power(motorL, 20)
         BP.set_motor_power(motorR, -20)
 
-        while (BP.get_motor_encoder(motorL) < targetL and 
-               BP.get_motor_encoder(motorR) < targetR):
+        while (BP.get_motor_encoder(motorL) < targetL or 
+               BP.get_motor_encoder(motorR) > targetR):
             pass
 
         print("Finished rotating")
 except Exception as e:
     print("Error: ", e)
 
-BP.reset_all()
 BP.reset_all()
