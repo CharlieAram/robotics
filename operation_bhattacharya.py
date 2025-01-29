@@ -14,32 +14,30 @@ ROTS_TURN = 1.142 - 0.015
 ROTST = [ROTS_TURN] * 4
 ROTST[1] *= 1.045
 POWER = 20
+FWD_STEPS = 20
+TURN_STEPS = 10
 
 try:
     BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
     BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
-
+    BP.set_motor_limits(motorL, power=POWER)
+    BP.set_motor_limits(motorR, power=POWER)
     for ROTS_FWD,ROTS_TURN in zip(ROTS,ROTST):
-        BP.set_motor_limits(motorL, power=POWER)
-        BP.set_motor_limits(motorR, power=POWER)
-        BP.set_motor_position_relative(motorL, 360 * ROTS_FWD)
-        BP.set_motor_position_relative(motorR, 360 * ROTS_FWD)
 
-        for i in range(10):
+        for i in range(FWD_STEPS):
+            BP.set_motor_position_relative(motorL, (360 * ROTS_FWD) / FWD_STEPS)
+            BP.set_motor_position_relative(motorR, (360 * ROTS_FWD) / FWD_STEPS)
             print(BP.get_motor_encoder(motorL))
             print(BP.get_motor_encoder(motorR))
-            time.sleep(1)
+            time.sleep(10/FWD_STEPS)
         print("Finished fwd")
 
-
-        BP.set_motor_limits(motorL, power=POWER)
-        BP.set_motor_limits(motorR, power=POWER)
-        BP.set_motor_position_relative(motorL, 360 * ROTS_TURN)
-        BP.set_motor_position_relative(motorR, -360 * ROTS_TURN)
-        for i in range(5):
+        for i in range(TURN_STEPS):
+            BP.set_motor_position_relative(motorL, (360 * ROTS_TURN) / TURN_STEPS)
+            BP.set_motor_position_relative(motorR, -(360 * ROTS_TURN) / TURN_STEPS)
             print(BP.get_motor_encoder(motorL))
             print(BP.get_motor_encoder(motorR))
-            time.sleep(1)
+            time.sleep(5/TURN_STEPS)
 
         print("Finished rotating")
 except:
