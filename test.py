@@ -61,6 +61,7 @@ try:
         r=-BP.get_motor_encoder(motorR)
         t = time.time()
         while (l < targetL or r < targetR):
+            print(l, r, targetL, targetR)
             if l < targetL and r < targetR and time.time() - t > 0.4:
                 ratio = (l-r) / 10
                 print(ratio)
@@ -74,7 +75,7 @@ try:
                 BP.set_motor_power(motorL, 0)
             if r >= targetR:
                 BP.set_motor_power(motorR, 0)
-        print("Finished rotating")
+        print("Finished rotating",l,r)
 except:
     print("Error")
 
