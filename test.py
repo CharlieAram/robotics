@@ -41,6 +41,10 @@ try:
 
             l=BP.get_motor_encoder(motorL)
             r=BP.get_motor_encoder(motorR)
+            if l >= targetL:
+                BP.set_motor_power(motorL, 0)
+            if r >= targetR:
+                BP.set_motor_power(motorR, 0)
 
         print("Finished fwd")
 
@@ -63,7 +67,10 @@ try:
                 BP.set_motor_power(motorL, 20 - ratio)
                 BP.set_motor_power(motorR, -(20 + ratio))
                 t = time.time()
-
+            if l >= targetL:
+                BP.set_motor_power(motorL, 0)
+            if r <= targetR:
+                BP.set_motor_power(motorR, 0)
         print("Finished rotating")
 except:
     print("Error")
