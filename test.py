@@ -51,6 +51,9 @@ try:
         BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
         BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
 
+        BP.set_motor_power(motorL, 20)
+        BP.set_motor_power(motorR, -20)
+
         targetL = ROTS_TURN
         targetR = ROTS_TURN
 
@@ -58,8 +61,6 @@ try:
         r=-BP.get_motor_encoder(motorR)
         t = time.time()
         while (l < targetL or r < targetR):
-            BP.set_motor_power(motorL, 20)
-            BP.set_motor_power(motorR, 20)
             if l < targetL and r < targetR and time.time() - t > 0.4:
                 ratio = (l-r) / 10
                 print(ratio)
