@@ -51,6 +51,9 @@ try:
         BP.offset_motor_encoder(motorL, BP.get_motor_encoder(motorL))
         BP.offset_motor_encoder(motorR, BP.get_motor_encoder(motorR))
 
+        targetL = ROTS_TURN
+        targetR = ROTS_TURN
+
         l=BP.get_motor_encoder(motorL)
         r=-BP.get_motor_encoder(motorR)
         t = time.time()
@@ -63,7 +66,7 @@ try:
                 t = time.time()
 
             l=BP.get_motor_encoder(motorL)
-            r=BP.get_motor_encoder(motorR)
+            r=-BP.get_motor_encoder(motorR)
             if l >= targetL:
                 BP.set_motor_power(motorL, 0)
             if r >= targetR:
