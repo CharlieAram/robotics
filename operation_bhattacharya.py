@@ -28,7 +28,7 @@ try:
         for i in range(10):
             print(BP.get_motor_encoder(motorL))
             print(BP.get_motor_encoder(motorR))
-            time.sleep(0.4)
+            time.sleep(1)
         print("Finished fwd")
 
 
@@ -39,7 +39,7 @@ try:
         for i in range(5):
             print(BP.get_motor_encoder(motorL))
             print(BP.get_motor_encoder(motorR))
-            time.sleep(0.4)
+            time.sleep(1)
 
         print("Finished rotating")
 except:
