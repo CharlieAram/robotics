@@ -24,7 +24,8 @@ try:
         targetL = BP.get_motor_encoder(motorL) + 360*ROTS_FWD
         targetR = BP.get_motor_encoder(motorR) + 360*ROTS_FWD
 
-        BP.set_motor_power(motorL & motorR, 20)
+        BP.set_motor_power(motorL, 20)
+        BP.set_motor_power( motorR, 20)
 
         while (BP.get_motor_encoder(motorL) < targetL or
                BP.get_motor_encoder(motorR) < targetR):
