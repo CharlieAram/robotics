@@ -27,7 +27,7 @@ try:
         for i in range(FWD_STEPS):
             diff = BP.get_motor_encoder(motorL) - BP.get_motor_encoder(motorR)
             print(BP.get_motor_encoder(motorL), BP.get_motor_encoder(motorR), diff)
-            if diff > 0:
+            if diff < 0:
                 BP.set_motor_position_relative(motorL, (360 * ROTS_FWD) / FWD_STEPS)
                 BP.set_motor_position_relative(motorR, ((360 * ROTS_FWD) / FWD_STEPS) + diff)
             else:
