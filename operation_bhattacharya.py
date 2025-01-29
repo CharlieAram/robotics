@@ -28,11 +28,11 @@ try:
             diff = BP.get_motor_encoder(motorL) - BP.get_motor_encoder(motorR)
             print(BP.get_motor_encoder(motorL), BP.get_motor_encoder(motorR), diff)
             if diff < 0:
-                BP.set_motor_position_relative(motorL, (360 * ROTS_FWD) / FWD_STEPS)
-                BP.set_motor_position_relative(motorR, ((360 * ROTS_FWD) / FWD_STEPS) + diff)
-            else:
                 BP.set_motor_position_relative(motorL, ((360 * ROTS_FWD) / FWD_STEPS) + diff)
                 BP.set_motor_position_relative(motorR, (360 * ROTS_FWD) / FWD_STEPS)
+            else:
+                BP.set_motor_position_relative(motorL, (360 * ROTS_FWD) / FWD_STEPS)
+                BP.set_motor_position_relative(motorR, (360 * ROTS_FWD) / FWD_STEPS + diff)
             time.sleep(10/FWD_STEPS)
         print("Finished fwd")
 
