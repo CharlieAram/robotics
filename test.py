@@ -44,7 +44,7 @@ try:
             pass
 
         print("Finished rotating")
-except Exception as e:
-    print("Error: ", e)
+except:
+    print("Error")
 
 BP.reset_all()
