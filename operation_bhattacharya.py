@@ -23,9 +23,9 @@ try:
     BP.set_motor_limits(motorL, power=POWER)
     BP.set_motor_limits(motorR, power=POWER)
     for ROTS_FWD,ROTS_TURN in zip(ROTS,ROTST):
-
+        base_diff = BP.get_motor_encoder(motorL) - BP.get_motor_encoder(motorR)
         for i in range(FWD_STEPS):
-            diff = BP.get_motor_encoder(motorL) - BP.get_motor_encoder(motorR)
+            diff = (BP.get_motor_encoder(motorL) - BP.get_motor_encoder(motorR)) - base_diff
             print(BP.get_motor_encoder(motorL), BP.get_motor_encoder(motorR), diff)
             if diff < 0:
                 BP.set_motor_position_relative(motorL, ((360 * ROTS_FWD) / FWD_STEPS) + diff)
