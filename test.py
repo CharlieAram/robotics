@@ -32,8 +32,8 @@ try:
         r=BP.get_motor_encoder(motorR)
         t = time.time()
         while (l < targetL or r < targetR):
-            if l < targetL and r < targetR and l + r > 60 and time.time() - t > 0.2:
-                ratio = (l-r)
+            if l < targetL and r < targetR and l + r > 60 and time.time() - t > 0.4:
+                ratio = (l-r) / 10
                 print(ratio)
                 BP.set_motor_power(motorL, 20 - ratio)
                 BP.set_motor_power(motorR, 20 + ratio)
