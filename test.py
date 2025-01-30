@@ -12,6 +12,7 @@ ROTS = [ROTS_FWD, ROTS_FWD * 40/42.5] * 2
 ROTS[2] *= 0.93
 ROTS_TURN = 1.142 - 0.015
 ROTST = [ROTS_TURN] * 4
+ROTST[2] *= 0.93
 
 try:
 
