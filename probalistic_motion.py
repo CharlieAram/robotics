@@ -1,7 +1,25 @@
 from dataclasses import dataclass, field
 import math
 from random import gauss
-from draw import draw_particles
+from time import sleep
+
+def rescale(x,y):
+    return (x*10 + 100, y*10 + 100)
+
+def draw_line(x0: float, y0: float, x1: float, y1: float):
+    x0,y0 = rescale(x0,y0)
+    x1,y1 = rescale(x1,y1)
+    print(f"drawLine: ({x0}, {y0}, {x1}, {y1})")
+
+def draw_particles(particles: list[tuple[float, float, float]]): # x,y,theta
+    particles = [(*rescale(x,y),theta) for (x,y,theta) in particles]
+    print(f"drawParticles: {particles}")
+
+def draw_particle(x: float, y: float, theta: float):
+    x,y = rescale(x,y)
+    print(f"drawParticles: [({x}, {y}, {theta})]")
+
+
 
 @dataclass
 class Position:
@@ -51,7 +69,7 @@ class Robot:
 
     # Call when we move the robot forward
     def move_forward(self, D):
-        for particle in self.particle_cloud.particles:
+        for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
             particle.move_forward(D)
@@ -59,7 +77,7 @@ class Robot:
 
     # Call when we rotate the robot at each corner
     def rotate(self, angle):
-        for particle in self.particle_cloud.particles:
+        for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(angle + epsilon)
         self.draw_if_verbose()
@@ -69,12 +87,16 @@ class Robot:
             draw_particles([(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud])
 
 if __name__ == "__main__":
-    robot = Robot(20, 0.1, verbose=True)
-    robot.move_forward(1)
-    robot.rotate(math.pi / 2)
-    robot.move_forward(1)
-    robot.rotate(math.pi / 2)
-    robot.move_forward(1)
-    robot.rotate(math.pi / 2)
-    robot.move_forward(1)
-    robot.rotate(math.pi / 2)
+    robot = Robot(100, 0.02, verbose=True)
+    
+    corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
+    
+    for a,b in zip(corners,corners[1:]):
+        draw_line(*a,*b)
+    
+    for _ in range(4):
+        for _ in range(4):
+            robot.move_forward(10)
+            sleep(1)
+        robot.rotate(-math.pi / 2)
+        sleep(1)
