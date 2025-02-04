@@ -3,7 +3,7 @@ import math
 from random import gauss
 from draw import draw_particles
 
-@dataclass(slots=True)
+@dataclass
 class Position:
     x: float
     y: float
@@ -17,7 +17,7 @@ class Position:
         self.theta += angle
 
 
-@dataclass(slots=True)
+@dataclass
 class weightedPosition:
     pos: Position
     weight: float
@@ -29,7 +29,7 @@ class weightedPosition:
         self.pos.rotate(angle)
 
 
-@dataclass(slots=True)
+@dataclass
 class ParticleCloud:
     particles: list[weightedPosition] = field(default_factory=list)
 
