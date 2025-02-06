@@ -53,22 +53,22 @@ turn_speed = 230
 #Move Forward
 
 def fwd(power: int = speed):
-        BP.set_motor_power(motorR,power)
+        BP.set_motor_power(motorR,-power)
         BP.set_motor_power(motorL,power)
 
 #Move Left
 def left():
-        BP.set_motor_power(motorR, turn_speed)
+        BP.set_motor_power(motorR, -turn_speed)
         BP.set_motor_power(motorL, -turn_speed)
 
 #Move Right
 def right():
-        BP.set_motor_power(motorR, -turn_speed)
+        BP.set_motor_power(motorR, turn_speed)
         BP.set_motor_power(motorL, turn_speed)
 
 #Move backward
 def back():
-        BP.set_motor_power(motorR, -speed)
+        BP.set_motor_power(motorR, speed)
         BP.set_motor_power(motorL, -speed)
 
 #Stop
