@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 import math
 from random import gauss
 from time import sleep
+import brickpi3
 
 def rescale(x,y):
     return (x*10 + 100, y*10 + 100)
@@ -57,9 +58,16 @@ class ParticleCloud:
 
 class Robot:
     def __init__(self, num_points: int, sigma: float, verbose=False):
+        self.BP = brickpi3.BrickPi3()
+
         # Initialize the robot at the center of the world
         self.sigma = sigma
         self.verbose = verbose
+        self.motorR = self.BP.PORT_B # right motor
+        self.motorL = self.BP.PORT_C # left motor
+        self.speed = 100 # range is -255 to 255, make lower if bot it too fast
+        self.ROTS_FWD = 1.0 # IDK Chief
+        self.ROTS_TURN = 1.142 - 0.015
         self.particle_cloud = ParticleCloud(
             [
                 weightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
@@ -69,6 +77,9 @@ class Robot:
 
     # Call when we move the robot forward
     def move_forward(self, D):
+        
+        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD))
+        self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_FWD))
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
@@ -77,6 +88,8 @@ class Robot:
 
     # Call when we rotate the robot at each corner
     def rotate(self, angle):
+        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD) * angle)
+        self.BP.set_motor_position_relative(self.motorR, (360 * self.ROTS_FWD) * angle)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(angle + epsilon)
@@ -87,16 +100,20 @@ class Robot:
             draw_particles([(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud])
 
 if __name__ == "__main__":
-    robot = Robot(100, 0.02, verbose=True)
-    
-    corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
-    
-    for a,b in zip(corners,corners[1:]):
-        draw_line(*a,*b)
-    
-    for _ in range(4):
+    try: 
+        robot = Robot(100, 0.02, verbose=True)
+        
+        corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
+        
+        for a,b in zip(corners,corners[1:]):
+            draw_line(*a,*b)
+        
         for _ in range(4):
-            robot.move_forward(10)
+            for _ in range(4):
+                robot.move_forward(10)
+                sleep(1)
+            robot.rotate(math.pi / 2)
             sleep(1)
-        robot.rotate(-math.pi / 2)
-        sleep(1)
+    except KeyboardInterrupt:
+        robot.BP.reset_all()
+        print("Tom is a gimp")
