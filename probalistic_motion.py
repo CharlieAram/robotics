@@ -156,7 +156,9 @@ if __name__ == "__main__":
         #     sleep(1)
         robot = Robot(100, 0.02, verbose=True)
         robot.navigateToWaypoint(20, 30)
+        sleep(3)
         robot.navigateToWaypoint(-20, -20)
+        sleep(3)
         robot.navigateToWaypoint(0, 0)
     except KeyboardInterrupt:
         robot.BP.reset_all()
