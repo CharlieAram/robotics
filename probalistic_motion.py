@@ -155,8 +155,8 @@ if __name__ == "__main__":
         #     robot.rotate(math.pi / 2)
         #     sleep(1)
         robot = Robot(100, 0.02, verbose=True)
-        robot.navigateToWaypoint(2, 3)
-        robot.navigateToWaypoint(-1, -1)
+        robot.navigateToWaypoint(20, 30)
+        robot.navigateToWaypoint(-20, -20)
         robot.navigateToWaypoint(0, 0)
     except KeyboardInterrupt:
         robot.BP.reset_all()
