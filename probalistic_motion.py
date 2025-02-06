@@ -66,18 +66,30 @@ class Robot:
         self.motorR = self.BP.PORT_B # right motor
         self.motorL = self.BP.PORT_C # left motor
         self.speed = 100 # range is -255 to 255, make lower if bot it too fast
-        self.ROTS_FWD = 1.0 # IDK Chief
-        self.ROTS_TURN = 1.142 - 0.015
+        self.ROTS_FWD = 1.5 # IDK Chief
+        self.ROTS_TURN = 0.7
         self.particle_cloud = ParticleCloud(
             [
                 weightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
                 for _ in range(num_points)
             ]
         )
+    def getMeanPos(self):
+        x = 0
+        y = 0
+        theta = 0
+        for particle in self.particle_cloud.particles:
+            x += particle.pos.x * particle.weight
+            y += particle.pos.y * particle.weight
+            theta += particle.pos.theta * particle.weight
+        return (x, y, theta) / len(self.particle_cloud.particles)
+            
+    def navigateToWaypoint(self, x, y):
+        (x, y, theta) = self.getMeanPos()
+
 
     # Call when we move the robot forward
     def move_forward(self, D):
-        
         self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD))
         self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_FWD))
         for particle in self.particle_cloud:
