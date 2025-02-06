@@ -76,8 +76,9 @@ class Robot:
 
     # Call when we move the robot forward
     def move_forward(self, D):
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD) / D)
-        self.BP.set_motor_position_relative(self.motorR, (360 * self.ROTS_FWD) / D)
+        
+        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD) * D)
+        self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_FWD) * D)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
