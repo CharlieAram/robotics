@@ -88,8 +88,8 @@ class Robot:
 
     # Call when we rotate the robot at each corner
     def rotate(self, angle):
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD) * angle)
-        self.BP.set_motor_position_relative(self.motorR, (360 * self.ROTS_FWD) * angle)
+        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_TURN) * angle)
+        self.BP.set_motor_position_relative(self.motorR, (360 * self.ROTS_TURN) * angle)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(angle + epsilon)
