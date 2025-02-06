@@ -82,7 +82,11 @@ class Robot:
             x += particle.pos.x * particle.weight
             y += particle.pos.y * particle.weight
             theta += particle.pos.theta * particle.weight
-        return (x, y, theta) / len(self.particle_cloud.particles)
+        x = x / len(self.particle_cloud.particles)
+        y = y / len(self.particle_cloud.particles)
+        theta = theta / len(self.particle_cloud.particles)
+
+        return (x, y, theta)
             
     def navigateToWaypoint(self, x, y):
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
