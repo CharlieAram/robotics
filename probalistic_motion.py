@@ -85,13 +85,36 @@ class Robot:
         return (x, y, theta) / len(self.particle_cloud.particles)
             
     def navigateToWaypoint(self, x, y):
-        (x, y, theta) = self.getMeanPos()
-
+        (robot_x, robot_y, robot_theta) = self.getMeanPos()
+        r = math.sqrt((x-robot_x)**2 + (y-robot_y)**2)
+        theta = math.atan2(y-robot_y, x-robot_x) - robot_theta
+        self.rotate(theta)
+        self.move_forward(r)
+    
+    def find_theta(self, target_x, target_y):
+        delta_x = target_x - self.getMeanPos()[0]
+        delta_y = target_y - self.getMeanPos()[1]
+        if delta_x >= 0 and delta_y >= 0:
+            # First quadrant
+            # delta x and delta y are positive
+            return math.atan(delta_y / delta_x)
+        elif delta_x >= 0:
+            # Fourth quadrant
+            # delta x is positive and delta y is negative
+            return -math.atan(-delta_y / delta_x)
+        elif delta_y >= 0:
+            # Second quadrant
+            # delta x is negative and delta y is positive
+            return math.pi - math.atan(delta_y / -delta_x)
+        else:
+            # Third quadrant
+            # delta x and delta y are negative
+            return -math.pi + math.atan(delta_y / delta_x)
 
     # Call when we move the robot forward
     def move_forward(self, D):
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD))
-        self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_FWD))
+        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD * D))
+        self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_FWD * D))
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
