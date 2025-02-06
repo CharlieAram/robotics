@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 import math
 from random import gauss
 from time import sleep
+import brickpi3
 
 def rescale(x,y):
     return (x*10 + 100, y*10 + 100)
@@ -57,9 +58,15 @@ class ParticleCloud:
 
 class Robot:
     def __init__(self, num_points: int, sigma: float, verbose=False):
+        self.BP = brickpi3.BrickPi3()
+
         # Initialize the robot at the center of the world
         self.sigma = sigma
         self.verbose = verbose
+        self.motorR = self.BP.PORT_B # right motor
+        self.motorL = self.BP.PORT_C # left motor
+        self.speed = 170 # range is -255 to 255, make lower if bot it too fast
+        self.ROTS_FWD = 4.244 * (38/42.5) * 1.12
         self.particle_cloud = ParticleCloud(
             [
                 weightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
@@ -69,6 +76,8 @@ class Robot:
 
     # Call when we move the robot forward
     def move_forward(self, D):
+        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_TURN) / D)
+        self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_TURN) / D)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
