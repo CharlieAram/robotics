@@ -65,8 +65,9 @@ class Robot:
         self.verbose = verbose
         self.motorR = self.BP.PORT_B # right motor
         self.motorL = self.BP.PORT_C # left motor
-        self.speed = 170 # range is -255 to 255, make lower if bot it too fast
-        self.ROTS_FWD = 4.244 * (38/42.5) * 1.12
+        self.speed = 100 # range is -255 to 255, make lower if bot it too fast
+        self.ROTS_FWD = 1.0 # IDK Chief
+        self.ROTS_TURN = 1.142 - 0.015
         self.particle_cloud = ParticleCloud(
             [
                 weightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
