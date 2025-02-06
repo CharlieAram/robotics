@@ -134,21 +134,26 @@ class Robot:
         if self.verbose:
             draw_particles([(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud])
 
+
 if __name__ == "__main__":
     try: 
+        # robot = Robot(100, 0.02, verbose=True)
+        
+        # corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
+        
+        # for a,b in zip(corners,corners[1:]):
+        #     draw_line(*a,*b)
+        
+        # for _ in range(4):
+        #     for _ in range(4):
+        #         robot.move_forward(10)
+        #         sleep(1)
+        #     robot.rotate(math.pi / 2)
+        #     sleep(1)
         robot = Robot(100, 0.02, verbose=True)
-        
-        corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
-        
-        for a,b in zip(corners,corners[1:]):
-            draw_line(*a,*b)
-        
-        for _ in range(4):
-            for _ in range(4):
-                robot.move_forward(10)
-                sleep(1)
-            robot.rotate(math.pi / 2)
-            sleep(1)
+        robot.navigateToWaypoint(2, 3)
+        robot.navigateToWaypoint(-1, -1)
+        robot.navigateToWaypoint(0, 0)
     except KeyboardInterrupt:
         robot.BP.reset_all()
         print("Tom is a gimp")
