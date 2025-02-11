@@ -17,7 +17,7 @@
 
 # --- curses interface added for consistent input mang.
 
-#Commands:
+# Commands:
 
 #       w-Move forward
 
@@ -35,80 +35,88 @@
 
 import time
 
-import brickpi3 #import BrickPi.py file to use BrickPi operations
+import brickpi3  # import BrickPi.py file to use BrickPi operations
 
-import curses   # import curses for text processing
+import curses  # import curses for text processing
 
 # set up curses interface
 
 stdscr = curses.initscr()
 curses.noecho()
 
-BP = brickpi3.BrickPi3() # Create an instance of the BrickPi3 class. BP will be the BrickPi3 object.
-motorR = BP.PORT_B # right motor
-motorL = BP.PORT_C # left motor
-speed = 170 # range is -255 to 255, make lower if bot it too fast
+BP = (
+    brickpi3.BrickPi3()
+)  # Create an instance of the BrickPi3 class. BP will be the BrickPi3 object.
+motorR = BP.PORT_B  # right motor
+motorL = BP.PORT_C  # left motor
+speed = 170  # range is -255 to 255, make lower if bot it too fast
 boost_speed = 100
 turn_speed = 230
-#Move Forward
+# Move Forward
+
 
 def fwd(power: int = speed):
-        BP.set_motor_power(motorR,-power)
-        BP.set_motor_power(motorL,power)
+    BP.set_motor_power(motorR, -power)
+    BP.set_motor_power(motorL, power)
 
-#Move Left
+
+# Move Left
 def left():
-        BP.set_motor_power(motorR, -turn_speed)
-        BP.set_motor_power(motorL, -turn_speed)
+    BP.set_motor_power(motorR, -turn_speed)
+    BP.set_motor_power(motorL, -turn_speed)
 
-#Move Right
+
+# Move Right
 def right():
-        BP.set_motor_power(motorR, turn_speed)
-        BP.set_motor_power(motorL, turn_speed)
+    BP.set_motor_power(motorR, turn_speed)
+    BP.set_motor_power(motorL, turn_speed)
 
-#Move backward
+
+# Move backward
 def back():
-        BP.set_motor_power(motorR, speed)
-        BP.set_motor_power(motorL, -speed)
+    BP.set_motor_power(motorR, speed)
+    BP.set_motor_power(motorL, -speed)
 
-#Stop
+
+# Stop
 def stop():
-        BP.set_motor_power(motorR, 0)
-        BP.set_motor_power(motorL, 0)
+    BP.set_motor_power(motorR, 0)
+    BP.set_motor_power(motorL, 0)
+
 
 # def boost():
 #         BP.set_motor_power(motorR, -boost_speed)
 #         BP.set_motor_power(motorL, -boost_speed)
 
 try:
-        while True:
-                inp = stdscr.getkey() #Take input from the terminal
-                #Move the bot
-                if inp == 's':
-                        fwd()
-                        print("fwd")
+    while True:
+        inp = stdscr.getkey()  # Take input from the terminal
+        # Move the bot
+        if inp == "s":
+            fwd()
+            print("fwd")
 
-                elif inp=='a' :
-                        left()
-                        print("left")
+        elif inp == "a":
+            left()
+            print("left")
 
-                elif inp=='d':
-                        right()
-                        print("right")
+        elif inp == "d":
+            right()
+            print("right")
 
-                elif inp=='w':
-                        back()
-                        print("back")
+        elif inp == "w":
+            back()
+            print("back")
 
-                elif inp=='/' or inp=='x':
-                        stop()
-                        print("stop")
+        elif inp == "/" or inp == "x":
+            stop()
+            print("stop")
 
-                elif inp=='b':
-                        fwd(boost_speed)
-                        print("boost")
-                time.sleep(.01)         # sleep for 10 ms
+        elif inp == "b":
+            fwd(boost_speed)
+            print("boost")
+        time.sleep(0.01)  # sleep for 10 ms
 except KeyboardInterrupt:
-        BP.reset_all()
-        curses.endwin()  # Reset terminal
-        print("Keyboard Interrupt")
+    BP.reset_all()
+    curses.endwin()  # Reset terminal
+    print("Keyboard Interrupt")

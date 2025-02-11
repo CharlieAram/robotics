@@ -9,13 +9,14 @@
 
 from __future__ import print_function
 from __future__ import division
-#from builtins import input
 
-import subprocess # for executing system calls
+# from builtins import input
+
+import subprocess  # for executing system calls
 import spidev
-import array      # for converting hex string to byte array
+import array  # for converting hex string to byte array
 
-FIRMWARE_VERSION_REQUIRED = "1.4.x" # Make sure the top 2 of 3 numbers match
+FIRMWARE_VERSION_REQUIRED = "1.4.x"  # Make sure the top 2 of 3 numbers match
 
 BP_SPI = spidev.SpiDev()
 BP_SPI.open(0, 1)
@@ -27,23 +28,23 @@ BP_SPI.bits_per_word = 8
 class Enumeration(object):
     def __init__(self, names):  # or *names, with no .split()
         number = 0
-        for line, name in enumerate(names.split('\n')):
+        for line, name in enumerate(names.split("\n")):
             if name.find(",") >= 0:
                 # strip out the spaces
-                while(name.find(" ") != -1):
-                    name = name[:name.find(" ")] + name[(name.find(" ") + 1):]
+                while name.find(" ") != -1:
+                    name = name[: name.find(" ")] + name[(name.find(" ") + 1) :]
 
                 # strip out the commas
-                while(name.find(",") != -1):
-                    name = name[:name.find(",")] + name[(name.find(",") + 1):]
+                while name.find(",") != -1:
+                    name = name[: name.find(",")] + name[(name.find(",") + 1) :]
 
                 # if the value was specified
-                if(name.find("=") != -1):
-                    number = int(float(name[(name.find("=") + 1):]))
-                    name = name[:name.find("=")]
+                if name.find("=") != -1:
+                    number = int(float(name[(name.find("=") + 1) :]))
+                    name = name[: name.find("=")]
 
                 # optionally print to confirm that it's working correctly
-                #print "%40s has a value of %d" % (name, number)
+                # print "%40s has a value of %d" % (name, number)
 
                 setattr(self, name, number)
                 number = number + 1
@@ -67,19 +68,25 @@ def set_address(address, id):
     """
     address = int(address)
     if address < 1 or address > 255:
-        raise IOError("brickpi3.set_address error: SPI address must be in the range of 1 to 255")
+        raise IOError(
+            "brickpi3.set_address error: SPI address must be in the range of 1 to 255"
+        )
         return
 
-    if(len(id) != 32):
+    if len(id) != 32:
         if id == "":
             id_arr = [0 for i in range(16)]
         else:
-            raise IOError("brickpi3.set_address error: wrong serial number id length. Must be a 32-digit hex string.")
+            raise IOError(
+                "brickpi3.set_address error: wrong serial number id length. Must be a 32-digit hex string."
+            )
             return
     else:
-        id_arr = array.array('B', bytearray.fromhex(id))
-        if(len(id_arr) != 16):
-            raise IOError("brickpi3.set_address error: unknown serial number id problem. Make sure to use a valid 32-digit hex string serial number.")
+        id_arr = array.array("B", bytearray.fromhex(id))
+        if len(id_arr) != 16:
+            raise IOError(
+                "brickpi3.set_address error: unknown serial number id problem. Make sure to use a valid 32-digit hex string serial number."
+            )
             return
 
     outArray = [0, BrickPi3.BPSPI_MESSAGE_TYPE.SET_ADDRESS, address]
@@ -105,7 +112,8 @@ class BrickPi3(object):
 
     I2C_LENGTH_LIMIT = 16
 
-    BPSPI_MESSAGE_TYPE = Enumeration("""
+    BPSPI_MESSAGE_TYPE = Enumeration(
+        """
         NONE,
 
         GET_MANUFACTURER,
@@ -159,9 +167,11 @@ class BrickPi3(object):
         GET_MOTOR_B_STATUS,
         GET_MOTOR_C_STATUS,
         GET_MOTOR_D_STATUS,
-    """)
+    """
+    )
 
-    SENSOR_TYPE = Enumeration("""
+    SENSOR_TYPE = Enumeration(
+        """
         NONE = 1,
         I2C,
         CUSTOM,
@@ -198,17 +208,21 @@ class BrickPi3(object):
         EV3_INFRARED_PROXIMITY,
         EV3_INFRARED_SEEK,
         EV3_INFRARED_REMOTE,
-    """)
+    """
+    )
 
-    SENSOR_STATE = Enumeration("""
+    SENSOR_STATE = Enumeration(
+        """
         VALID_DATA,
         NOT_CONFIGURED,
         CONFIGURING,
         NO_DATA,
         I2C_ERROR,
-    """)
+    """
+    )
 
-    SENSOR_CUSTOM = Enumeration("""
+    SENSOR_CUSTOM = Enumeration(
+        """
         PIN1_9V,
         PIN5_OUT,
         PIN5_STATE,
@@ -216,7 +230,8 @@ class BrickPi3(object):
         PIN6_STATE,
         PIN1_ADC,
         PIN6_ADC,
-    """)
+    """
+    )
     """
     Flags for use with SENSOR_TYPE.CUSTOM
 
@@ -244,40 +259,50 @@ class BrickPi3(object):
         Enable the analog/digital converter on pin 6.
     """
 
-    SENSOR_CUSTOM.PIN1_9V    = 0x0002
-    SENSOR_CUSTOM.PIN5_OUT   = 0x0010
+    SENSOR_CUSTOM.PIN1_9V = 0x0002
+    SENSOR_CUSTOM.PIN5_OUT = 0x0010
     SENSOR_CUSTOM.PIN5_STATE = 0x0020
-    SENSOR_CUSTOM.PIN6_OUT   = 0x0100
+    SENSOR_CUSTOM.PIN6_OUT = 0x0100
     SENSOR_CUSTOM.PIN6_STATE = 0x0200
-    SENSOR_CUSTOM.PIN1_ADC   = 0x1000
-    SENSOR_CUSTOM.PIN6_ADC   = 0x4000
+    SENSOR_CUSTOM.PIN1_ADC = 0x1000
+    SENSOR_CUSTOM.PIN6_ADC = 0x4000
 
-    SENSOR_I2C_SETTINGS = Enumeration("""
+    SENSOR_I2C_SETTINGS = Enumeration(
+        """
         MID_CLOCK,
         PIN1_9V,
         SAME,
         ALLOW_STRETCH_ACK,
         ALLOW_STRETCH_ANY,
-    """)
+    """
+    )
 
-    SENSOR_I2C_SETTINGS.MID_CLOCK         = 0x01 # Send the clock pulse between reading and writing. Required by the NXT US sensor.
-    SENSOR_I2C_SETTINGS.PIN1_9V           = 0x02 # 9v pullup on pin 1
-    SENSOR_I2C_SETTINGS.SAME              = 0x04 # Keep performing the same transaction e.g. keep polling a sensor
+    SENSOR_I2C_SETTINGS.MID_CLOCK = 0x01  # Send the clock pulse between reading and writing. Required by the NXT US sensor.
+    SENSOR_I2C_SETTINGS.PIN1_9V = 0x02  # 9v pullup on pin 1
+    SENSOR_I2C_SETTINGS.SAME = (
+        0x04  # Keep performing the same transaction e.g. keep polling a sensor
+    )
 
-    MOTOR_STATUS_FLAG = Enumeration("""
+    MOTOR_STATUS_FLAG = Enumeration(
+        """
         LOW_VOLTAGE_FLOAT,
         OVERLOADED,
-    """)
+    """
+    )
 
-    MOTOR_STATUS_FLAG.LOW_VOLTAGE_FLOAT = 0x01 # If the motors are floating due to low battery voltage
-    MOTOR_STATUS_FLAG.OVERLOADED        = 0x02 # If the motors aren't close to the target (applies to position control and dps speed control).
+    MOTOR_STATUS_FLAG.LOW_VOLTAGE_FLOAT = (
+        0x01  # If the motors are floating due to low battery voltage
+    )
+    MOTOR_STATUS_FLAG.OVERLOADED = 0x02  # If the motors aren't close to the target (applies to position control and dps speed control).
 
-    #SUCCESS = 0
-    #SPI_ERROR = 1
-    #SENSOR_ERROR = 2
-    #SENSOR_TYPE_ERROR = 3
+    # SUCCESS = 0
+    # SPI_ERROR = 1
+    # SENSOR_ERROR = 2
+    # SENSOR_TYPE_ERROR = 3
 
-    def __init__(self, addr = 1, detect = True): # Configure for the BrickPi. Optionally set the address (default to 1). Optionally disable detection (default to detect).
+    def __init__(
+        self, addr=1, detect=True
+    ):  # Configure for the BrickPi. Optionally set the address (default to 1). Optionally disable detection (default to detect).
         """
         Do any necessary configuration, and optionally detect the BrickPi3
 
@@ -299,8 +324,14 @@ class BrickPi3(object):
                 raise IOError("No SPI response")
             if manufacturer != "Dexter Industries" or board != "BrickPi3":
                 raise IOError("No SPI response")
-            if vfw.split('.')[0] != FIRMWARE_VERSION_REQUIRED.split('.')[0] or vfw.split('.')[1] != FIRMWARE_VERSION_REQUIRED.split('.')[1]:
-                raise FirmwareVersionError("BrickPi3 firmware needs to be version %s but is currently version %s" % (FIRMWARE_VERSION_REQUIRED, vfw))
+            if (
+                vfw.split(".")[0] != FIRMWARE_VERSION_REQUIRED.split(".")[0]
+                or vfw.split(".")[1] != FIRMWARE_VERSION_REQUIRED.split(".")[1]
+            ):
+                raise FirmwareVersionError(
+                    "BrickPi3 firmware needs to be version %s but is currently version %s"
+                    % (FIRMWARE_VERSION_REQUIRED, vfw)
+                )
 
     def spi_transfer_array(self, data_out):
         """
@@ -336,7 +367,7 @@ class BrickPi3(object):
         """
         outArray = [self.SPI_Address, MessageType, 0, 0, 0, 0]
         reply = self.spi_transfer_array(outArray)
-        if(reply[3] == 0xA5):
+        if reply[3] == 0xA5:
             return int((reply[4] << 8) | reply[5])
         raise IOError("No SPI response")
         return
@@ -349,7 +380,12 @@ class BrickPi3(object):
         MessageType -- the SPI message type
         Value -- the value to be sent
         """
-        outArray = [self.SPI_Address, MessageType, ((Value >> 8) & 0xFF), (Value & 0xFF)]
+        outArray = [
+            self.SPI_Address,
+            MessageType,
+            ((Value >> 8) & 0xFF),
+            (Value & 0xFF),
+        ]
         self.spi_transfer_array(outArray)
 
     def spi_write_24(self, MessageType, Value):
@@ -360,7 +396,13 @@ class BrickPi3(object):
         MessageType -- the SPI message type
         Value -- the value to be sent
         """
-        outArray = [self.SPI_Address, MessageType, ((Value >> 16) & 0xFF), ((Value >> 8) & 0xFF), (Value & 0xFF)]
+        outArray = [
+            self.SPI_Address,
+            MessageType,
+            ((Value >> 16) & 0xFF),
+            ((Value >> 8) & 0xFF),
+            (Value & 0xFF),
+        ]
         self.spi_transfer_array(outArray)
 
     def spi_read_32(self, MessageType):
@@ -375,7 +417,7 @@ class BrickPi3(object):
         """
         outArray = [self.SPI_Address, MessageType, 0, 0, 0, 0, 0, 0]
         reply = self.spi_transfer_array(outArray)
-        if(reply[3] == 0xA5):
+        if reply[3] == 0xA5:
             return int((reply[4] << 24) | (reply[5] << 16) | (reply[6] << 8) | reply[7])
         raise IOError("No SPI response")
         return
@@ -388,7 +430,14 @@ class BrickPi3(object):
         MessageType -- the SPI message type
         Value -- the value to be sent
         """
-        outArray = [self.SPI_Address, MessageType, ((Value >> 24) & 0xFF), ((Value >> 16) & 0xFF), ((Value >> 8) & 0xFF), (Value & 0xFF)]
+        outArray = [
+            self.SPI_Address,
+            MessageType,
+            ((Value >> 24) & 0xFF),
+            ((Value >> 16) & 0xFF),
+            ((Value >> 8) & 0xFF),
+            (Value & 0xFF),
+        ]
         self.spi_transfer_array(outArray)
 
     def get_manufacturer(self):
@@ -398,9 +447,34 @@ class BrickPi3(object):
         Returns:
         BrickPi3 manufacturer name string
         """
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.GET_MANUFACTURER, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.GET_MANUFACTURER,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ]
         reply = self.spi_transfer_array(outArray)
-        if(reply[3] == 0xA5):
+        if reply[3] == 0xA5:
             name = ""
             for c in range(4, 24):
                 if reply[c] != 0:
@@ -418,9 +492,34 @@ class BrickPi3(object):
         Returns:
         BrickPi3 board name string
         """
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.GET_NAME, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.GET_NAME,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ]
         reply = self.spi_transfer_array(outArray)
-        if(reply[3] == 0xA5):
+        if reply[3] == 0xA5:
             name = ""
             for c in range(4, 24):
                 if reply[c] != 0:
@@ -439,7 +538,11 @@ class BrickPi3(object):
         hardware version
         """
         version = self.spi_read_32(self.BPSPI_MESSAGE_TYPE.GET_HARDWARE_VERSION)
-        return ("%d.%d.%d" % ((version / 1000000), ((version / 1000) % 1000), (version % 1000)))
+        return "%d.%d.%d" % (
+            (version / 1000000),
+            ((version / 1000) % 1000),
+            (version % 1000),
+        )
 
     def get_version_firmware(self):
         """
@@ -449,7 +552,11 @@ class BrickPi3(object):
         firmware version
         """
         version = self.spi_read_32(self.BPSPI_MESSAGE_TYPE.GET_FIRMWARE_VERSION)
-        return ("%d.%d.%d" % ((version / 1000000), ((version / 1000) % 1000), (version % 1000)))
+        return "%d.%d.%d" % (
+            (version / 1000000),
+            ((version / 1000) % 1000),
+            (version % 1000),
+        )
 
     def get_id(self):
         """
@@ -458,10 +565,51 @@ class BrickPi3(object):
         Returns:
         serial number as 32 char HEX formatted string
         """
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.GET_ID, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.GET_ID,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ]
         reply = self.spi_transfer_array(outArray)
-        if(reply[3] == 0xA5):
-            return ("%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X" % (reply[4], reply[5], reply[6], reply[7], reply[8], reply[9], reply[10], reply[11], reply[12], reply[13], reply[14], reply[15], reply[16], reply[17], reply[18], reply[19]))
+        if reply[3] == 0xA5:
+            return (
+                "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X"
+                % (
+                    reply[4],
+                    reply[5],
+                    reply[6],
+                    reply[7],
+                    reply[8],
+                    reply[9],
+                    reply[10],
+                    reply[11],
+                    reply[12],
+                    reply[13],
+                    reply[14],
+                    reply[15],
+                    reply[16],
+                    reply[17],
+                    reply[18],
+                    reply[19],
+                )
+            )
         raise IOError("No SPI response")
         return
 
@@ -482,7 +630,7 @@ class BrickPi3(object):
         3.3v circuit voltage
         """
         value = self.spi_read_16(self.BPSPI_MESSAGE_TYPE.GET_VOLTAGE_3V3)
-        return (value / 1000.0)
+        return value / 1000.0
 
     def get_voltage_5v(self):
         """
@@ -492,7 +640,7 @@ class BrickPi3(object):
         5v circuit voltage
         """
         value = self.spi_read_16(self.BPSPI_MESSAGE_TYPE.GET_VOLTAGE_5V)
-        return (value / 1000.0)
+        return value / 1000.0
 
     def get_voltage_9v(self):
         """
@@ -502,7 +650,7 @@ class BrickPi3(object):
         9v circuit voltage
         """
         value = self.spi_read_16(self.BPSPI_MESSAGE_TYPE.GET_VOLTAGE_9V)
-        return (value / 1000.0)
+        return value / 1000.0
 
     def get_voltage_battery(self):
         """
@@ -512,9 +660,9 @@ class BrickPi3(object):
         battery voltage
         """
         value = self.spi_read_16(self.BPSPI_MESSAGE_TYPE.GET_VOLTAGE_VCC)
-        return (value / 1000.0)
+        return value / 1000.0
 
-    def set_sensor_type(self, port, type, params = 0):
+    def set_sensor_type(self, port, type, params=0):
         """
         Set the sensor type
 
@@ -537,27 +685,46 @@ class BrickPi3(object):
         for p in range(4):
             if port & (1 << p):
                 self.SensorType[p] = type
-        if(type == self.SENSOR_TYPE.CUSTOM):
-            outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_SENSOR_TYPE, int(port), type, ((params[0] >> 8) & 0xFF), (params[0] & 0xFF)]
+        if type == self.SENSOR_TYPE.CUSTOM:
+            outArray = [
+                self.SPI_Address,
+                self.BPSPI_MESSAGE_TYPE.SET_SENSOR_TYPE,
+                int(port),
+                type,
+                ((params[0] >> 8) & 0xFF),
+                (params[0] & 0xFF),
+            ]
 
-            #self.spi_write_24(self.BPSPI_MESSAGE_TYPE.SET_SENSOR_TYPE, int(port), ((type << 16) + (params[0])))
-        elif(type == self.SENSOR_TYPE.I2C):
+            # self.spi_write_24(self.BPSPI_MESSAGE_TYPE.SET_SENSOR_TYPE, int(port), ((type << 16) + (params[0])))
+        elif type == self.SENSOR_TYPE.I2C:
             if len(params) >= 2:
-                outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_SENSOR_TYPE, int(port), type, params[0], params[1]] # Settings, SpeedUS
+                outArray = [
+                    self.SPI_Address,
+                    self.BPSPI_MESSAGE_TYPE.SET_SENSOR_TYPE,
+                    int(port),
+                    type,
+                    params[0],
+                    params[1],
+                ]  # Settings, SpeedUS
                 if params[0] & self.SENSOR_I2C_SETTINGS.SAME and len(params) >= 6:
-                    outArray.append((params[2] >> 24) & 0xFF) # DelayUS
-                    outArray.append((params[2] >> 16) & 0xFF) #   ''
+                    outArray.append((params[2] >> 24) & 0xFF)  # DelayUS
+                    outArray.append((params[2] >> 16) & 0xFF)  #   ''
                     outArray.append((params[2] >> 8) & 0xFF)  #   ''
-                    outArray.append(params[2] & 0xFF)         #   ''
-                    outArray.append(params[3] & 0xFF)   # Address
-                    outArray.append(params[5] & 0xFF)   # InBytes
+                    outArray.append(params[2] & 0xFF)  #   ''
+                    outArray.append(params[3] & 0xFF)  # Address
+                    outArray.append(params[5] & 0xFF)  # InBytes
                     for p in range(4):
                         if port & (1 << p):
                             self.I2CInBytes[p] = params[5] & 0xFF
-                    outArray.append(len(params[4]))     # OutBytes
-                    outArray.extend(params[4])          # OutArray
+                    outArray.append(len(params[4]))  # OutBytes
+                    outArray.extend(params[4])  # OutArray
         else:
-            outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_SENSOR_TYPE, int(port), type]
+            outArray = [
+                self.SPI_Address,
+                self.BPSPI_MESSAGE_TYPE.SET_SENSOR_TYPE,
+                int(port),
+                type,
+            ]
 
         self.spi_transfer_array(outArray)
 
@@ -584,7 +751,9 @@ class BrickPi3(object):
             message_type = self.BPSPI_MESSAGE_TYPE.I2C_TRANSACT_4
             port_index = 3
         else:
-            raise IOError("transact_i2c error. Must be one sensor port at a time. PORT_1, PORT_2, PORT_3, or PORT_4.")
+            raise IOError(
+                "transact_i2c error. Must be one sensor port at a time. PORT_1, PORT_2, PORT_3, or PORT_4."
+            )
             return
 
         if self.SensorType[port_index] != self.SENSOR_TYPE.I2C:
@@ -592,7 +761,7 @@ class BrickPi3(object):
         outArray = [self.SPI_Address, message_type, Address, InBytes]
         self.I2CInBytes[port_index] = InBytes
         OutBytes = len(OutArray)
-        if(OutBytes > self.I2C_LENGTH_LIMIT):
+        if OutBytes > self.I2C_LENGTH_LIMIT:
             outArray.append(self.I2C_LENGTH_LIMIT)
             for b in range(self.I2C_LENGTH_LIMIT):
                 outArray.append(OutArray[b])
@@ -655,15 +824,25 @@ class BrickPi3(object):
             message_type = self.BPSPI_MESSAGE_TYPE.GET_SENSOR_4
             port_index = 3
         else:
-            raise IOError("get_sensor error. Must be one sensor port at a time. PORT_1, PORT_2, PORT_3, or PORT_4.")
+            raise IOError(
+                "get_sensor error. Must be one sensor port at a time. PORT_1, PORT_2, PORT_3, or PORT_4."
+            )
             return
 
         if self.SensorType[port_index] == self.SENSOR_TYPE.CUSTOM:
             outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0, 0, 0, 0]
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if(reply[4] == self.SensorType[port_index] and reply[5] == self.SENSOR_STATE.VALID_DATA):
-                    return [(((reply[8] & 0x0F) << 8) | reply[9]), (((reply[8] >> 4) & 0x0F) | (reply[7] << 4)), (reply[6] & 0x01), ((reply[6] >> 1) & 0x01)]
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    and reply[5] == self.SENSOR_STATE.VALID_DATA
+                ):
+                    return [
+                        (((reply[8] & 0x0F) << 8) | reply[9]),
+                        (((reply[8] >> 4) & 0x0F) | (reply[7] << 4)),
+                        (reply[6] & 0x01),
+                        ((reply[6] >> 1) & 0x01),
+                    ]
                 else:
                     raise SensorError("get_sensor error: Invalid sensor data")
                     return
@@ -676,8 +855,12 @@ class BrickPi3(object):
             for b in range(self.I2CInBytes[port_index]):
                 outArray.append(0)
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if(reply[4] == self.SensorType[port_index] and reply[5] == self.SENSOR_STATE.VALID_DATA and len(reply) - 6 == self.I2CInBytes[port_index]):
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    and reply[5] == self.SENSOR_STATE.VALID_DATA
+                    and len(reply) - 6 == self.I2CInBytes[port_index]
+                ):
                     values = []
                     for b in range(6, len(reply)):
                         values.append(reply[b])
@@ -689,19 +872,30 @@ class BrickPi3(object):
                 raise IOError("get_sensor error: No SPI response")
                 return
 
-        elif(self.SensorType[port_index] == self.SENSOR_TYPE.TOUCH
-          or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_TOUCH
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_TOUCH
-          or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_ULTRASONIC
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_REFLECTED
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_AMBIENT
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_COLOR
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_ULTRASONIC_LISTEN
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_INFRARED_PROXIMITY):
+        elif (
+            self.SensorType[port_index] == self.SENSOR_TYPE.TOUCH
+            or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_TOUCH
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_TOUCH
+            or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_ULTRASONIC
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_REFLECTED
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_AMBIENT
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_COLOR
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_ULTRASONIC_LISTEN
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_INFRARED_PROXIMITY
+        ):
             outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0]
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if((reply[4] == self.SensorType[port_index] or (self.SensorType[port_index] == self.SENSOR_TYPE.TOUCH and (reply[4] == self.SENSOR_TYPE.NXT_TOUCH or reply[4] == self.SENSOR_TYPE.EV3_TOUCH))) and reply[5] == self.SENSOR_STATE.VALID_DATA):
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    or (
+                        self.SensorType[port_index] == self.SENSOR_TYPE.TOUCH
+                        and (
+                            reply[4] == self.SENSOR_TYPE.NXT_TOUCH
+                            or reply[4] == self.SENSOR_TYPE.EV3_TOUCH
+                        )
+                    )
+                ) and reply[5] == self.SENSOR_STATE.VALID_DATA:
                     return reply[6]
                 else:
                     raise SensorError("get_sensor error: Invalid sensor data")
@@ -713,9 +907,18 @@ class BrickPi3(object):
         elif self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_FULL:
             outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if(reply[4] == self.SensorType[port_index] and reply[5] == self.SENSOR_STATE.VALID_DATA):
-                    return [reply[6], ((reply[7] << 2) | ((reply[11] >> 6) & 0x03)), ((reply[8] << 2) | ((reply[11] >> 4) & 0x03)), ((reply[9] << 2) | ((reply[11] >> 2) & 0x03)), ((reply[10] << 2) | (reply[11] & 0x03))]
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    and reply[5] == self.SENSOR_STATE.VALID_DATA
+                ):
+                    return [
+                        reply[6],
+                        ((reply[7] << 2) | ((reply[11] >> 6) & 0x03)),
+                        ((reply[8] << 2) | ((reply[11] >> 4) & 0x03)),
+                        ((reply[9] << 2) | ((reply[11] >> 2) & 0x03)),
+                        ((reply[10] << 2) | (reply[11] & 0x03)),
+                    ]
                 else:
                     raise SensorError("get_sensor error: Invalid sensor data")
                     return
@@ -723,27 +926,37 @@ class BrickPi3(object):
                 raise IOError("get_sensor error: No SPI response")
                 return
 
-        elif(self.SensorType[port_index] == self.SENSOR_TYPE.NXT_LIGHT_ON
-          or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_LIGHT_OFF
-          or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_RED
-          or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_GREEN
-          or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_BLUE
-          or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_OFF
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_ABS
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_DPS
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_ULTRASONIC_CM
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_ULTRASONIC_INCHES):
+        elif (
+            self.SensorType[port_index] == self.SENSOR_TYPE.NXT_LIGHT_ON
+            or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_LIGHT_OFF
+            or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_RED
+            or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_GREEN
+            or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_BLUE
+            or self.SensorType[port_index] == self.SENSOR_TYPE.NXT_COLOR_OFF
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_ABS
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_DPS
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_ULTRASONIC_CM
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_ULTRASONIC_INCHES
+        ):
             outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0, 0]
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if(reply[4] == self.SensorType[port_index] and reply[5] == self.SENSOR_STATE.VALID_DATA):
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    and reply[5] == self.SENSOR_STATE.VALID_DATA
+                ):
                     value = int((reply[6] << 8) | reply[7])
-                    if((self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_ABS
-                    or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_DPS)
-                    and (value & 0x8000)):
+                    if (
+                        self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_ABS
+                        or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_DPS
+                    ) and (value & 0x8000):
                         value = value - 0x10000
-                    elif(self.SensorType[port_index] == self.SENSOR_TYPE.EV3_ULTRASONIC_CM
-                      or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_ULTRASONIC_INCHES):
+                    elif (
+                        self.SensorType[port_index]
+                        == self.SENSOR_TYPE.EV3_ULTRASONIC_CM
+                        or self.SensorType[port_index]
+                        == self.SENSOR_TYPE.EV3_ULTRASONIC_INCHES
+                    ):
                         value = value / 10
                     return value
                 else:
@@ -753,13 +966,21 @@ class BrickPi3(object):
                 raise IOError("get_sensor error: No SPI response")
                 return
 
-        elif(self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_RAW_REFLECTED
-          or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_ABS_DPS):
+        elif (
+            self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_RAW_REFLECTED
+            or self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_ABS_DPS
+        ):
             outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0, 0, 0, 0]
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if(reply[4] == self.SensorType[port_index] and reply[5] == self.SENSOR_STATE.VALID_DATA):
-                    results = [int((reply[6] << 8) | reply[7]), int((reply[8] << 8) | reply[9])]
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    and reply[5] == self.SENSOR_STATE.VALID_DATA
+                ):
+                    results = [
+                        int((reply[6] << 8) | reply[7]),
+                        int((reply[8] << 8) | reply[9]),
+                    ]
                     if self.SensorType[port_index] == self.SENSOR_TYPE.EV3_GYRO_ABS_DPS:
                         for r in range(len(results)):
                             if results[r] >= 0x8000:
@@ -772,12 +993,35 @@ class BrickPi3(object):
                 raise IOError("get_sensor error: No SPI response")
                 return
 
-        elif(self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_COLOR_COMPONENTS):
-            outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        elif self.SensorType[port_index] == self.SENSOR_TYPE.EV3_COLOR_COLOR_COMPONENTS:
+            outArray = [
+                self.SPI_Address,
+                message_type,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if(reply[4] == self.SensorType[port_index] and reply[5] == self.SENSOR_STATE.VALID_DATA):
-                    return [int((reply[6] << 8) | reply[7]), int((reply[8] << 8) | reply[9]), int((reply[10] << 8) | reply[11]), int((reply[12] << 8) | reply[13])]
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    and reply[5] == self.SENSOR_STATE.VALID_DATA
+                ):
+                    return [
+                        int((reply[6] << 8) | reply[7]),
+                        int((reply[8] << 8) | reply[9]),
+                        int((reply[10] << 8) | reply[11]),
+                        int((reply[12] << 8) | reply[13]),
+                    ]
                 else:
                     raise SensorError("get_sensor error: Invalid sensor data")
                     return
@@ -785,12 +1029,35 @@ class BrickPi3(object):
                 raise IOError("get_sensor error: No SPI response")
                 return
 
-        elif(self.SensorType[port_index] == self.SENSOR_TYPE.EV3_INFRARED_SEEK):
-            outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        elif self.SensorType[port_index] == self.SENSOR_TYPE.EV3_INFRARED_SEEK:
+            outArray = [
+                self.SPI_Address,
+                message_type,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if(reply[4] == self.SensorType[port_index] and reply[5] == self.SENSOR_STATE.VALID_DATA):
-                    results = [[int(reply[6]), int(reply[7])], [int(reply[8]), int(reply[9])], [int(reply[10]), int(reply[11])], [int(reply[12]), int(reply[13])]]
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    and reply[5] == self.SENSOR_STATE.VALID_DATA
+                ):
+                    results = [
+                        [int(reply[6]), int(reply[7])],
+                        [int(reply[8]), int(reply[9])],
+                        [int(reply[10]), int(reply[11])],
+                        [int(reply[12]), int(reply[13])],
+                    ]
                     for c in range(len(results)):
                         for v in range(len(results[c])):
                             if results[c][v] >= 0x80:
@@ -803,11 +1070,14 @@ class BrickPi3(object):
                 raise IOError("get_sensor error: No SPI response")
                 return
 
-        elif(self.SensorType[port_index] == self.SENSOR_TYPE.EV3_INFRARED_REMOTE):
+        elif self.SensorType[port_index] == self.SENSOR_TYPE.EV3_INFRARED_REMOTE:
             outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0, 0, 0, 0]
             reply = self.spi_transfer_array(outArray)
-            if(reply[3] == 0xA5):
-                if(reply[4] == self.SensorType[port_index] and reply[5] == self.SENSOR_STATE.VALID_DATA):
+            if reply[3] == 0xA5:
+                if (
+                    reply[4] == self.SensorType[port_index]
+                    and reply[5] == self.SENSOR_STATE.VALID_DATA
+                ):
                     results = [0, 0, 0, 0]
                     for r in range(len(results)):
                         value = int(reply[6 + r])
@@ -844,7 +1114,7 @@ class BrickPi3(object):
                 return
 
         raise IOError("get_sensor error: Sensor not configured or not supported.")
-        return # sensor not configured or not supported.
+        return  # sensor not configured or not supported.
 
     def set_motor_power(self, port, power):
         """
@@ -854,7 +1124,12 @@ class BrickPi3(object):
         port -- The Motor port(s). PORT_A, PORT_B, PORT_C, and/or PORT_D.
         power -- The power from -100 to 100, or -128 for float
         """
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_MOTOR_POWER, int(port), int(power)]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.SET_MOTOR_POWER,
+            int(port),
+            int(power),
+        ]
         self.spi_transfer_array(outArray)
 
     def set_motor_position(self, port, position):
@@ -866,7 +1141,15 @@ class BrickPi3(object):
         position -- The target position
         """
         position = int(position)
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_MOTOR_POSITION, int(port), ((position >> 24) & 0xFF), ((position >> 16) & 0xFF), ((position >> 8) & 0xFF), (position & 0xFF)]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.SET_MOTOR_POSITION,
+            int(port),
+            ((position >> 24) & 0xFF),
+            ((position >> 16) & 0xFF),
+            ((position >> 8) & 0xFF),
+            (position & 0xFF),
+        ]
         self.spi_transfer_array(outArray)
 
     def set_motor_position_relative(self, port, degrees):
@@ -879,9 +1162,11 @@ class BrickPi3(object):
         """
         for p in range(4):
             if port & (1 << p):
-                self.set_motor_position((1 << p), (self.get_motor_encoder(1 << p) + degrees))
+                self.set_motor_position(
+                    (1 << p), (self.get_motor_encoder(1 << p) + degrees)
+                )
 
-    def set_motor_position_kp(self, port, kp = 25):
+    def set_motor_position_kp(self, port, kp=25):
         """
         Set the motor target position KP constant
 
@@ -893,10 +1178,15 @@ class BrickPi3(object):
         port -- The motor port(s). PORT_A, PORT_B, PORT_C, and/or PORT_D.
         kp -- The KP constant (default 25)
         """
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_MOTOR_POSITION_KP, int(port), int(kp)]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.SET_MOTOR_POSITION_KP,
+            int(port),
+            int(kp),
+        ]
         self.spi_transfer_array(outArray)
 
-    def set_motor_position_kd(self, port, kd = 70):
+    def set_motor_position_kd(self, port, kd=70):
         """
         Set the motor target position KD constant
 
@@ -908,7 +1198,12 @@ class BrickPi3(object):
         port -- The motor port(s). PORT_A, PORT_B, PORT_C, and/or PORT_D.
         kd -- The KD constant (default 70)
         """
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_MOTOR_POSITION_KD, int(port), int(kd)]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.SET_MOTOR_POSITION_KD,
+            int(port),
+            int(kd),
+        ]
         self.spi_transfer_array(outArray)
 
     def set_motor_dps(self, port, dps):
@@ -920,10 +1215,16 @@ class BrickPi3(object):
         dps -- The target speed in degrees per second
         """
         dps = int(dps)
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_MOTOR_DPS, int(port), ((dps >> 8) & 0xFF), (dps & 0xFF)]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.SET_MOTOR_DPS,
+            int(port),
+            ((dps >> 8) & 0xFF),
+            (dps & 0xFF),
+        ]
         self.spi_transfer_array(outArray)
 
-    def set_motor_limits(self, port, power = 0, dps = 0):
+    def set_motor_limits(self, port, power=0, dps=0):
         """
         Set the motor speed limit
 
@@ -933,7 +1234,14 @@ class BrickPi3(object):
         dps -- The speed limit in degrees per second, with 0 being no limit
         """
         dps = int(dps)
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.SET_MOTOR_LIMITS, int(port), int(power), ((dps >> 8) & 0xFF), (dps & 0xFF)]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.SET_MOTOR_LIMITS,
+            int(port),
+            int(power),
+            ((dps >> 8) & 0xFF),
+            (dps & 0xFF),
+        ]
         self.spi_transfer_array(outArray)
 
     def get_motor_status(self, port):
@@ -960,18 +1268,24 @@ class BrickPi3(object):
         elif port == self.PORT_D:
             message_type = self.BPSPI_MESSAGE_TYPE.GET_MOTOR_D_STATUS
         else:
-            raise IOError("get_motor_status error. Must be one motor port at a time. PORT_A, PORT_B, PORT_C, or PORT_D.")
+            raise IOError(
+                "get_motor_status error. Must be one motor port at a time. PORT_A, PORT_B, PORT_C, or PORT_D."
+            )
             return
 
         outArray = [self.SPI_Address, message_type, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         reply = self.spi_transfer_array(outArray)
-        if(reply[3] == 0xA5):
+        if reply[3] == 0xA5:
             speed = int(reply[5])
             if speed & 0x80:
                 speed = speed - 0x100
 
-            encoder = int((reply[6] << 24) | (reply[7] << 16) | (reply[8] << 8) | reply[9])
-            if encoder & 0x80000000: # MT was 0x10000000, but I think it should be 0x80000000
+            encoder = int(
+                (reply[6] << 24) | (reply[7] << 16) | (reply[8] << 8) | reply[9]
+            )
+            if (
+                encoder & 0x80000000
+            ):  # MT was 0x10000000, but I think it should be 0x80000000
                 encoder = int(encoder - 0x100000000)
 
             dps = int((reply[10] << 8) | reply[11])
@@ -1000,7 +1314,9 @@ class BrickPi3(object):
         elif port == self.PORT_D:
             message_type = self.BPSPI_MESSAGE_TYPE.GET_MOTOR_D_ENCODER
         else:
-            raise IOError("get_motor_encoder error. Must be one motor port at a time. PORT_A, PORT_B, PORT_C, or PORT_D.")
+            raise IOError(
+                "get_motor_encoder error. Must be one motor port at a time. PORT_A, PORT_B, PORT_C, or PORT_D."
+            )
             return
 
         encoder = self.spi_read_32(message_type)
@@ -1019,7 +1335,15 @@ class BrickPi3(object):
         You can zero the encoder by offsetting it by the current position
         """
         position = int(position)
-        outArray = [self.SPI_Address, self.BPSPI_MESSAGE_TYPE.OFFSET_MOTOR_ENCODER, int(port), ((position >> 24) & 0xFF), ((position >> 16) & 0xFF), ((position >> 8) & 0xFF), (position & 0xFF)]
+        outArray = [
+            self.SPI_Address,
+            self.BPSPI_MESSAGE_TYPE.OFFSET_MOTOR_ENCODER,
+            int(port),
+            ((position >> 24) & 0xFF),
+            ((position >> 16) & 0xFF),
+            ((position >> 8) & 0xFF),
+            (position & 0xFF),
+        ]
         self.spi_transfer_array(outArray)
 
     def reset_motor_encoder(self, port):
@@ -1046,17 +1370,25 @@ class BrickPi3(object):
         Reset the BrickPi. Set all the sensors' type to NONE, set the motors to float, and motors' limits and constants to default, and return control of the LED to the firmware.
         """
         # reset all sensors
-        self.set_sensor_type(self.PORT_1 + self.PORT_2 + self.PORT_3 + self.PORT_4, self.SENSOR_TYPE.NONE)
+        self.set_sensor_type(
+            self.PORT_1 + self.PORT_2 + self.PORT_3 + self.PORT_4, self.SENSOR_TYPE.NONE
+        )
 
         # turn off all motors
-        self.set_motor_power(self.PORT_A + self.PORT_B + self.PORT_C + self.PORT_D, self.MOTOR_FLOAT)
+        self.set_motor_power(
+            self.PORT_A + self.PORT_B + self.PORT_C + self.PORT_D, self.MOTOR_FLOAT
+        )
 
         # reset motor limits
         self.set_motor_limits(self.PORT_A + self.PORT_B + self.PORT_C + self.PORT_D)
 
         # reset motor kP and kD constants
-        self.set_motor_position_kp(self.PORT_A + self.PORT_B + self.PORT_C + self.PORT_D)
-        self.set_motor_position_kd(self.PORT_A + self.PORT_B + self.PORT_C + self.PORT_D)
+        self.set_motor_position_kp(
+            self.PORT_A + self.PORT_B + self.PORT_C + self.PORT_D
+        )
+        self.set_motor_position_kd(
+            self.PORT_A + self.PORT_B + self.PORT_C + self.PORT_D
+        )
 
         # return the LED to the control of the FW
         self.set_led(-1)
