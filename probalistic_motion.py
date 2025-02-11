@@ -4,6 +4,7 @@ from random import gauss
 from time import sleep
 from typing import Callable
 import brickpi3
+from motor_driver import MotorDriver
 
 
 def rescale(x, y):
@@ -87,11 +88,13 @@ class Robot:
         # Initialize the robot at the center of the world
         self.sigma = sigma
         self.verbose = verbose
-        self.motorR = self.BP.PORT_B  # right motor
-        self.motorL = self.BP.PORT_C  # left motor
-        self.speed = 100  # range is -255 to 255, make lower if bot it too fast
-        self.ROTS_FWD = 1.5  # IDK Chief
-        self.ROTS_TURN = 0.7
+        self.motorR = self.BP.PORT_B # right motor
+        self.motorL = self.BP.PORT_C # left motor
+        self.speed = 2
+        self.ROTS_FWD = 4.244 * (38 / 42.5) * 1.12 * 1/40 # IDK Chief
+        self.ROTS_TURN = 1.1 * 2/math.pi
+        self.driver = MotorDriver(self.motorL, self.motorR, self.speed)
+        self.driver.flipR = True
         self.particle_cloud = ParticleCloud(
             [
                 weightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
@@ -110,13 +113,13 @@ class Robot:
         return pos.x, pos.y, pos.theta
 
     def navigateToWaypoint(self, x, y):
+        # REWRITE THIS
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
         r = math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
         print(f"theta: {theta}, r: {r}")
-        self.rotate(theta)
-        sleep(2)
-        self.move_forward(r)
+        self.driver.rotate(theta)
+        self.driver.move_forward(r)
 
     # Call when we move the robot forward
     @motion
@@ -145,30 +148,30 @@ class Robot:
 
 
 if __name__ == "__main__":
-    try:
+    try: 
         # robot = Robot(100, 0.02, verbose=True)
-
+        
         # corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
-
+        
         # for a,b in zip(corners,corners[1:]):
         #     draw_line(*a,*b)
-
+        
         # for _ in range(4):
         #     for _ in range(4):
-        #         robot.move_forward(10)
+        #         robot.driver.move_forward(40)
         #         sleep(1)
-        #     robot.rotate(math.pi / 2)
+        #     robot.driver.rotate(90)
         #     sleep(1)
         robot = Robot(100, 0.02, verbose=True)
-        sleep(5)
-        robot.navigateToWaypoint(0, 5)
+        sleep(3)
+        robot.navigateToWaypoint(5, 0)
         print("done navigating")
-        sleep(5)
+        sleep(3)
         robot.navigateToWaypoint(5, 5)
         print("done navigating")
-        sleep(5)
-        robot.navigateToWaypoint(5, 0)
-        sleep(5)
+        sleep(3)
+        robot.navigateToWaypoint(0, 5)
+        sleep(3)
         robot.navigateToWaypoint(0, 0)
     except KeyboardInterrupt:
         robot.BP.reset_all()
