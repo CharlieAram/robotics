@@ -113,8 +113,8 @@ class Robot:
         return pos.x, pos.y, pos.theta
 
     def navigateToWaypoint(self, x, y):
-        # REWRITE THIS
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
+        print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
         r = math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
         print(f"theta: {theta}, r: {r}")
@@ -141,6 +141,7 @@ class Robot:
             particle.rotate(angle + epsilon)
 
     def update(self):
+        print("Updating")
         if self.verbose:
             draw_particles(
                 [(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud]
