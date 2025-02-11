@@ -1,6 +1,8 @@
 import brickpi3
 import sys
-sys.path.append('..')
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from motor_driver import MotorDriver
 
 SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 2
