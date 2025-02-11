@@ -30,6 +30,16 @@ class MotorDriver:
     
     def read(self):
         return self.read_left(), self.read_right()
+    
+    def write_left(self, val):
+        if self.flipL:
+            val = -val
+        self.BP.set_motor_power(self.motorL, val)
+    
+    def write_right(self, val):
+        if self.flipR:
+            val = -val
+        self.BP.set_motor_power(self.motorR, val)
 
     def move_forward(self, dist: float):
         """
@@ -45,8 +55,8 @@ class MotorDriver:
         targetL = 360 * dist
         targetR = 360 * dist
 
-        self.BP.set_motor_power(self.motorL, 20 * self.SCALE)
-        self.BP.set_motor_power(self.motorR, 20 * self.SCALE)
+        self.write_left(20 * self.SCALE)
+        self.write_right(20 * self.SCALE)
 
         l,r = self.read()
         t = time.time()
@@ -54,15 +64,15 @@ class MotorDriver:
             if l < targetL and r < targetR and time.time() - t > 0.4:
                 ratio = (l - r) / 10
                 print(ratio)
-                self.BP.set_motor_power(self.motorL, (20 - ratio) * self.SCALE)
-                self.BP.set_motor_power(self.motorR, (20 + ratio) * self.SCALE)
+                self.write_left((20 - ratio) * self.SCALE)
+                self.write_right((20 + ratio) * self.SCALE)
                 t = time.time()
 
             l,r = self.read()
             if l >= targetL:
-                self.BP.set_motor_power(self.motorL, 0)
+                self.write_left(0)
             if r >= targetR:
-                self.BP.set_motor_power(self.motorR, 0)
+                self.write_right(0)
 
     def rotate(self, angle: float):
         """
