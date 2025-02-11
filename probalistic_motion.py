@@ -93,7 +93,7 @@ class Robot:
         r = math.sqrt((x-robot_x)**2 + (y-robot_y)**2)
         theta = math.atan2(y-robot_y, x-robot_x) - robot_theta
         print(f"theta: {theta}, r: {r}")
-        self.rotate(math.pi / 2)
+        self.rotate(theta)
         sleep(2)
         self.move_forward(r)
     
