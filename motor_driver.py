@@ -27,6 +27,9 @@ class MotorDriver:
         if self.flipR:
             return -res
         return res
+    
+    def read(self):
+        return self.read_left(), self.read_right()
 
     def move_forward(self, dist: float):
         """
@@ -45,8 +48,7 @@ class MotorDriver:
         self.BP.set_motor_power(self.motorL, 20 * self.SCALE)
         self.BP.set_motor_power(self.motorR, 20 * self.SCALE)
 
-        l = self.BP.get_motor_encoder(self.motorL)
-        r = self.BP.get_motor_encoder(self.motorR)
+        l,r = self.read()
         t = time.time()
         while l < targetL or r < targetR:
             if l < targetL and r < targetR and time.time() - t > 0.4:
@@ -56,8 +58,7 @@ class MotorDriver:
                 self.BP.set_motor_power(self.motorR, (20 + ratio) * self.SCALE)
                 t = time.time()
 
-            l = self.BP.get_motor_encoder(self.motorL)
-            r = self.BP.get_motor_encoder(self.motorR)
+            l,r = self.read()
             if l >= targetL:
                 self.BP.set_motor_power(self.motorL, 0)
             if r >= targetR:
