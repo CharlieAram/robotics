@@ -117,6 +117,8 @@ class Robot:
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
         r = (math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)) / i
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
+        # Normalize theta to be within the range [-pi, pi]
+        theta = (theta + math.pi) % (2 * math.pi) - math.pi
         print(f"theta: {theta}, r: {r}")
 
         self.driver.rotate(theta)
@@ -177,12 +179,22 @@ if __name__ == "__main__":
         #         sleep(1)
         #     robot.rotate((math.pi/2))
         #     sleep(1)
+        # robot = Robot(100, 0.02, verbose=True)
+        # robot.update()
+        # robot.navigateToWaypoint(5, 0, 3)
+        # robot.navigateToWaypoint(5, 5, 3)
+        # robot.navigateToWaypoint(0, 5, 3)
+        # robot.navigateToWaypoint(0, 0, 3)
         robot = Robot(100, 0.02, verbose=True)
         robot.update()
-        robot.navigateToWaypoint(10, 0, 3)
-        robot.navigateToWaypoint(10, 10, 3)
-        robot.navigateToWaypoint(0, 10, 3)
-        robot.navigateToWaypoint(0, 0, 3)
+        
+        while True:
+            try:
+                x = float(input("Enter x coordinate: "))
+                y = float(input("Enter y coordinate: "))
+                robot.navigateToWaypoint(x, y, 4)
+            except ValueError:
+                print("Please enter valid numbers for coordinates")
     except KeyboardInterrupt:
         robot.BP.reset_all()
         print("Tom is a gimp")
