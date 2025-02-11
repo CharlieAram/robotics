@@ -21,7 +21,7 @@ ROTST[2] *= 0.97
 from motor_driver import MotorDriver
 
 driver = MotorDriver(motorL, motorR, SCALE)
-driver.flipL = True
+driver.flipR = True
 
 for ROTS_FWD, ROTS_TURN in zip(ROTS, ROTST):
     driver.move_forward(ROTS_FWD)
