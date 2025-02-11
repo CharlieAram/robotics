@@ -185,7 +185,7 @@ if __name__ == "__main__":
         # robot.navigateToWaypoint(5, 5, 3)
         # robot.navigateToWaypoint(0, 5, 3)
         # robot.navigateToWaypoint(0, 0, 3)
-        robot = Robot(100, 0.02, verbose=True)
+        robot = Robot(100, 0.02, verbose=False)
         robot.update()
         
         while True:
