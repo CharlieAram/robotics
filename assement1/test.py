@@ -1,6 +1,7 @@
 import brickpi3
-
 import sys
+sys.path.append('..')
+from motor_driver import MotorDriver
 
 SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 2
 
@@ -17,8 +18,6 @@ ROTST = [ROTS_TURN] * 4
 ROTST[0] *= 0.96
 ROTST[1] *= 0.96
 ROTST[2] *= 0.97
-
-from motor_driver import MotorDriver
 
 driver = MotorDriver(motorL, motorR, SCALE)
 driver.flipR = True
