@@ -92,7 +92,9 @@ class Robot:
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
         r = math.sqrt((x-robot_x)**2 + (y-robot_y)**2)
         theta = math.atan2(y-robot_y, x-robot_x) - robot_theta
-        self.rotate(theta)
+        print(f"theta: {theta}, r: {r}")
+        self.rotate(math.pi / 2)
+        sleep(2)
         self.move_forward(r)
     
     def find_theta(self, target_x, target_y):
@@ -156,9 +158,11 @@ if __name__ == "__main__":
         #     sleep(1)
         robot = Robot(100, 0.02, verbose=True)
         robot.navigateToWaypoint(5, 13)
-        sleep(10)
+        print("done navigating")
+        sleep(5)
         robot.navigateToWaypoint(-20, -20)
-        sleep(10)
+        print("done navigating")
+        sleep(5)
         robot.navigateToWaypoint(0, 0)
     except KeyboardInterrupt:
         robot.BP.reset_all()
