@@ -6,6 +6,7 @@ from typing import Callable
 import brickpi3
 from motor_driver import MotorDriver
 
+VERBOSE = False
 def rescale(x, y):
     return (x * 10 + 100, y * 10 + 100)
 
@@ -18,7 +19,8 @@ def draw_line(x0: float, y0: float, x1: float, y1: float):
 
 def draw_particles(particles: list[tuple[float, float, float]]):  # x,y,theta
     particles = [(*rescale(x, y), theta) for (x, y, theta) in particles]
-    print(f"drawParticles: {particles}")
+    if VERBOSE:
+        print(f"drawParticles: {particles}")
 
 
 def draw_particle(x: float, y: float, theta: float):
@@ -185,7 +187,7 @@ if __name__ == "__main__":
         # robot.navigateToWaypoint(5, 5, 3)
         # robot.navigateToWaypoint(0, 5, 3)
         # robot.navigateToWaypoint(0, 0, 3)
-        robot = Robot(100, 0.02, verbose=False)
+        robot = Robot(100, 0.02, verbose=True)
         robot.update()
         
         while True:
