@@ -6,7 +6,6 @@ from typing import Callable
 import brickpi3
 from motor_driver import MotorDriver
 
-
 def rescale(x, y):
     return (x * 10 + 100, y * 10 + 100)
 
@@ -109,28 +108,35 @@ class Robot:
                 for particle in self.particle_cloud.particles
             ],
             Position(0, 0, 0),
-        ) / len(self.particle_cloud.particles)
+        )
         return pos.x, pos.y, pos.theta
-
-    def navigateToWaypoint(self, x, y):
+    
+    @motion
+    def navigateToWaypoint(self, x, y, i=1):
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
-        r = math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)
+        r = (math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)) / i
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
         print(f"theta: {theta}, r: {r}")
+
         self.driver.rotate(theta)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(theta + epsilon)
-        self.driver.move_forward(r)
-        for particle in self.particle_cloud:
-            epsilon = gauss(0, self.sigma)
-            particle.rotate(epsilon)
-            particle.move_forward(r)
+        for _ in range(i):
+            self.update()
+            self.driver.move_forward(r)
+            for particle in self.particle_cloud:
+                epsilon = gauss(0, self.sigma) 
+                particle.rotate(epsilon)
+                particle.move_forward(r)
+            sleep(0.5)
+
 
     # Call when we move the robot forward
     @motion
     def move_forward(self, D):
+        print("mean pos", self.getMeanPos())
         self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD * D))
         self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_FWD * D))
         for particle in self.particle_cloud:
@@ -141,6 +147,7 @@ class Robot:
     # Call when we rotate the robot at each corner
     @motion
     def rotate(self, angle):
+        print("rot mean pos", self.getMeanPos())
         self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_TURN) * angle)
         self.BP.set_motor_position_relative(self.motorR, (360 * self.ROTS_TURN) * angle)
         for particle in self.particle_cloud:
@@ -148,7 +155,7 @@ class Robot:
             particle.rotate(angle + epsilon)
 
     def update(self):
-        print("Updating")
+        print("updating")
         if self.verbose:
             draw_particles(
                 [(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud]
@@ -166,15 +173,16 @@ if __name__ == "__main__":
         
         # for _ in range(4):
         #     for _ in range(4):
-        #         robot.driver.move_forward(40)
+        #         robot.move_forward(10)
         #         sleep(1)
-        #     robot.driver.rotate(90)
+        #     robot.rotate((math.pi/2))
         #     sleep(1)
         robot = Robot(100, 0.02, verbose=True)
-        robot.navigateToWaypoint(5, 0)
-        robot.navigateToWaypoint(5, 5)
-        robot.navigateToWaypoint(0, 5)
-        robot.navigateToWaypoint(0, 0)
+        robot.update()
+        robot.navigateToWaypoint(10, 0, 3)
+        robot.navigateToWaypoint(10, 10, 3)
+        robot.navigateToWaypoint(0, 10, 3)
+        robot.navigateToWaypoint(0, 0, 3)
     except KeyboardInterrupt:
         robot.BP.reset_all()
         print("Tom is a gimp")
