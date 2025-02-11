@@ -119,7 +119,14 @@ class Robot:
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
         print(f"theta: {theta}, r: {r}")
         self.driver.rotate(theta)
+        for particle in self.particle_cloud:
+            epsilon = gauss(0, self.sigma)
+            particle.rotate(theta + epsilon)
         self.driver.move_forward(r)
+        for particle in self.particle_cloud:
+            epsilon = gauss(0, self.sigma)
+            particle.rotate(epsilon)
+            particle.move_forward(r)
 
     # Call when we move the robot forward
     @motion
