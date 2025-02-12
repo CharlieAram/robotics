@@ -165,6 +165,7 @@ class Robot:
     # Call when we move the robot forward
     @motion
     def move_forward(self, D):
+        print(f"move_forward: {D}")
         self.driver.move_forward(D * self.FWD_SCALING)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
