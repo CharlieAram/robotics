@@ -25,9 +25,8 @@ else:
     brickpi3 = SelfReturningMock
 
 import sys
-SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 1
+VISUALISATION = bool(len(sys.argv) > 1)
 
-VERBOSE = False
 def rescale(x, y):
     return (x * 10 + 100, y * 10 + 100)
 
@@ -40,7 +39,7 @@ def draw_line(x0: float, y0: float, x1: float, y1: float):
 
 def draw_particles(particles: list[tuple[float, float, float]]):  # x,y,theta
     particles = [(*rescale(x, y), theta) for (x, y, theta) in particles]
-    if VERBOSE:
+    if VISUALISATION:
         print(f"drawParticles: {particles}")
 
 
@@ -108,15 +107,15 @@ def motion(f: Callable[Concatenate["Robot", P], T]) -> Callable[Concatenate["Rob
 
 
 class Robot:
-    def __init__(self, num_points: int, sigma: float, verbose=False):
+    def __init__(self, num_points: int, sigma: float, VIS=False):
         # Initialize the robot at the center of the world
         self.sigma = sigma
-        self.verbose = verbose
+        self.VIS = VIS
         self.motorR = brickpi3.BrickPi3.PORT_B # right motor
         self.motorL = brickpi3.BrickPi3.PORT_C # left motor
         self.speed = 2
         self.FWD_SCALING = (4.244 * (38 / 42.5) * 1.12 * 1/40) / 11 # IDK Chief
-        self.TURN_SCALING = (1.1 * 2/math.pi) * SCALE
+        self.TURN_SCALING = (1.1 * 2/math.pi)
         self.driver = MotorDriver(self.motorL, self.motorR, self.speed)
         self.driver.flipR = True
         self.particle_cloud = ParticleCloud(
@@ -176,39 +175,35 @@ class Robot:
 
     def update(self):
         print("updating")
-        if self.verbose:
+        if self.VIS:
             draw_particles(
                 [(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud]
             )
 
 
 if __name__ == "__main__":
-    # robot = Robot(100, 0.02, verbose=True)
-    
-    # corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
-    
-    # for a,b in zip(corners,corners[1:]):
-    #     draw_line(*a,*b)
-    
-    # for _ in range(4):
-    #     for _ in range(4):
-    #         robot.move_forward(10)
-    #         sleep(1)
-    #     robot.rotate((math.pi/2))
-    #     sleep(1)
-    # robot = Robot(100, 0.02, verbose=True)
-    # robot.update()
-    # robot.navigateToWaypoint(5, 0, 3)
-    # robot.navigateToWaypoint(5, 5, 3)
-    # robot.navigateToWaypoint(0, 5, 3)
-    # robot.navigateToWaypoint(0, 0, 3)
-    robot = Robot(100, 0.02, verbose=True)
-    robot.update()
-    
-    while True:
-        try:
-            x = float(input("Enter x coordinate: "))
-            y = float(input("Enter y coordinate: "))
-            robot.navigateToWaypoint(x, y, 4)
-        except ValueError:
-            print("Please enter valid numbers for coordinates")
+    if VISUALISATION:
+        robot = Robot(100, 0.02, VIS=True)
+        
+        corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
+        
+        for a,b in zip(corners,corners[1:]):
+            draw_line(*a,*b)
+        
+        for _ in range(4):
+            for _ in range(4):
+                robot.move_forward(40)
+                sleep(1)
+            robot.rotate((math.pi/2))
+            sleep(1)
+    else:
+        robot = Robot(100, 0.02, VIS=True)
+        robot.update()
+        
+        while True:
+            try:
+                x = float(input("Enter x coordinate: "))
+                y = float(input("Enter y coordinate: "))
+                robot.navigateToWaypoint(x, y, 4)
+            except ValueError:
+                print("Please enter valid numbers for coordinates")
