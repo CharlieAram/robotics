@@ -2,13 +2,16 @@ from dataclasses import dataclass, field, replace
 import math
 from random import gauss
 from time import sleep
-from typing import Callable
+from typing import Callable, ParamSpec, Concatenate, TypeVar
+import os
 
-if True:
+if "pi" in os.path.expanduser("~").split(os.path.sep):
     import brickpi3
     from motor_driver import MotorDriver
 else:
     class SelfReturningMock:
+        BrickPi3: "SelfReturningMock"
+        flipR: bool
         def __init__(self, *args, **kwargs) -> None:
             pass
         def __getattribute__(self, name):
@@ -53,19 +56,24 @@ class Position:
 
     def rotate(self, angle: float):
         self.theta += angle
+        self.theta = self.normalise(self.theta)
 
     def __truediv__(self, other):
-        return Position(self.x / other, self.y / other, self.theta / other)
+        return Position(self.x / other, self.y / other, self.normalise(self.theta / other))
 
     def __mul__(self, other):
-        return Position(self.x * other, self.y * other, self.theta * other)
+        return Position(self.x * other, self.y * other, self.normalise(self.theta * other))
 
     def __add__(self, other):
-        return Position(self.x + other.x, self.y + other.y, self.theta + other.theta)
+        return Position(self.x + other.x, self.y + other.y, self.normalise(self.theta + other.theta))
+    
+    @staticmethod
+    def normalise(theta: float):
+        return (theta + math.pi) % (2 * math.pi) - math.pi
 
 
 @dataclass
-class weightedPosition:
+class WeightedPosition:
     pos: Position
     weight: float
 
@@ -76,22 +84,25 @@ class weightedPosition:
         self.pos.rotate(angle)
 
     def clone_with_weight(self, weight: float):
-        return weightedPosition(pos=replace(self.pos), weight=weight)
+        return WeightedPosition(pos=replace(self.pos), weight=weight)
 
 
 @dataclass
 class ParticleCloud:
-    particles: list[weightedPosition] = field(default_factory=list)
+    particles: list[WeightedPosition] = field(default_factory=list)
 
     def __iter__(self):
         return iter(self.particles)
 
+P = ParamSpec("P")
+T = TypeVar("T")
 
-def motion(f: Callable[["Robot"], None]):
-    def wrapper(self: "Robot", *args, **kwargs):
-        f(self, *args, **kwargs)
-        self.update()
-
+def motion(f: Callable[Concatenate["Robot", P], T]) -> Callable[Concatenate["Robot", P], T]:
+    def wrapper(self: "Robot", *args: P.args, **kwargs: P.kwargs) -> T:
+        try:
+            return f(self, *args, **kwargs)
+        finally:
+            self.update()
     return wrapper
 
 
@@ -109,7 +120,7 @@ class Robot:
         self.driver.flipR = True
         self.particle_cloud = ParticleCloud(
             [
-                weightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
+                WeightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
                 for _ in range(num_points)
             ]
         )
