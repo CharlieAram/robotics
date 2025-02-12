@@ -128,21 +128,21 @@ class Robot:
     # Call when we move the robot forward
     @motion
     def move_forward(self, D):
-        print("mean pos", self.getMeanPos())
         self.driver.move_forward(D * self.FWD_SCALING)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
             particle.move_forward(D)
+        print("mean pos", self.getMeanPos())
 
     # Call when we rotate the robot at each corner
     @motion
     def rotate(self, angle):
-        print("rot mean pos", self.getMeanPos())
         self.driver.rotate(angle * self.TURN_SCALING)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(angle + epsilon)
+        print("rot mean pos", self.getMeanPos())
 
     def update(self):
         print("updating")
