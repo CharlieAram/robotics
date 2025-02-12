@@ -25,11 +25,6 @@ def draw_particles(particles: list[tuple[float, float, float]]):  # x,y,theta
         print(f"drawParticles: {particles}")
 
 
-def draw_particle(x: float, y: float, theta: float):
-    x, y = rescale(x, y)
-    print(f"drawParticles: [({x}, {y}, {theta})]")
-
-
 @dataclass
 class Position:
     x: float
