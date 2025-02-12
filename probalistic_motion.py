@@ -115,7 +115,6 @@ class Robot:
         )
         return pos.x, pos.y, pos.theta
     
-    @motion
     def navigateToWaypoint(self, x, y, i=1):
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
@@ -135,6 +134,7 @@ class Robot:
     # Call when we move the robot forward
     @motion
     def move_forward(self, D):
+        D *= self.FWD_SCALING
         print("mean pos", self.getMeanPos())
         self.driver.move_forward(D)
         for particle in self.particle_cloud:
@@ -145,6 +145,7 @@ class Robot:
     # Call when we rotate the robot at each corner
     @motion
     def rotate(self, angle):
+        angle *= self.TURN_SCALING
         print("rot mean pos", self.getMeanPos())
         self.driver.rotate(angle)
         for particle in self.particle_cloud:
