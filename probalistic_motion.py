@@ -125,17 +125,10 @@ class Robot:
         theta = (theta + math.pi) % (2 * math.pi) - math.pi
         print(f"theta: {theta}, r: {r}")
 
-        self.driver.rotate(theta)
-        for particle in self.particle_cloud:
-            epsilon = gauss(0, self.sigma)
-            particle.rotate(theta + epsilon)
+        self.rotate(theta)
         for _ in range(i):
             self.update()
-            self.driver.move_forward(r)
-            for particle in self.particle_cloud:
-                epsilon = gauss(0, self.sigma) 
-                particle.rotate(epsilon)
-                particle.move_forward(r)
+            self.move_forward(r / i)
             sleep(0.5)
 
 
@@ -143,8 +136,7 @@ class Robot:
     @motion
     def move_forward(self, D):
         print("mean pos", self.getMeanPos())
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.FWD_SCALING * D))
-        self.BP.set_motor_position_relative(self.motorR, -(360 * self.FWD_SCALING * D))
+        self.driver.move_forward(D)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
@@ -154,8 +146,7 @@ class Robot:
     @motion
     def rotate(self, angle):
         print("rot mean pos", self.getMeanPos())
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.TURN_SCALING) * angle)
-        self.BP.set_motor_position_relative(self.motorR, (360 * self.TURN_SCALING) * angle)
+        self.driver.rotate(angle)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(angle + epsilon)
