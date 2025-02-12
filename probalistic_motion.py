@@ -4,7 +4,7 @@ from random import gauss
 from time import sleep
 from typing import Callable
 
-if False:
+if True:
     import brickpi3
     from motor_driver import MotorDriver
 else:
