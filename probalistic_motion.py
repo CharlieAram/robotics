@@ -140,7 +140,7 @@ class Robot:
         return pos.x, pos.y, pos.theta
     
     def navigateToWaypoint(self, x, y, i=1):
-        (robot_x, robot_y, robot_theta) = self.getMeanPos()
+        robot_x, robot_y, robot_theta = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
         print(f"target x: {x}, target y: {y}")
         r = (math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)) / i
@@ -151,9 +151,13 @@ class Robot:
         print(f"theta: {theta}, r: {r}")
 
         self.rotate(theta)
-        for _ in range(i):
-            self.move_forward(r)
+        while r > i:
+            self.move_forward(i)
+            r -= i
             sleep(0.5)
+
+        self.move_forward(r)
+        sleep(0.5)
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
 
