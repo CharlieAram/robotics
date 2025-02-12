@@ -3,8 +3,24 @@ import math
 from random import gauss
 from time import sleep
 from typing import Callable
-import brickpi3
-from motor_driver import MotorDriver
+
+if False:
+    import brickpi3
+    from motor_driver import MotorDriver
+else:
+    class SelfReturningMock:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+        def __getattribute__(self, name):
+            return self
+        def __getattr__(self, name):
+            return self
+        def __call__(self, *args, **kwargs):
+            return self
+    SelfReturningMock.BrickPi3 = SelfReturningMock()
+    MotorDriver = SelfReturningMock
+    brickpi3 = SelfReturningMock
+
 import sys
 SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 1
 
@@ -81,15 +97,13 @@ def motion(f: Callable[["Robot"], None]):
 
 class Robot:
     def __init__(self, num_points: int, sigma: float, verbose=False):
-        self.BP = brickpi3.BrickPi3()
-
         # Initialize the robot at the center of the world
         self.sigma = sigma
         self.verbose = verbose
-        self.motorR = self.BP.PORT_B # right motor
-        self.motorL = self.BP.PORT_C # left motor
+        self.motorR = brickpi3.BrickPi3.PORT_B # right motor
+        self.motorL = brickpi3.BrickPi3.PORT_C # left motor
         self.speed = 2
-        self.FWD_SCALING = 1
+        self.FWD_SCALING = 4.244 * (38 / 42.5) * 1.12 * 1/40 # IDK Chief
         self.TURN_SCALING = (1.1 * 2/math.pi) * SCALE
         self.driver = MotorDriver(self.motorL, self.motorR, self.speed)
         self.driver.flipR = True
@@ -113,8 +127,10 @@ class Robot:
     def navigateToWaypoint(self, x, y, i=1):
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
+        print(f"target x: {x}, target y: {y}")
         r = (math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)) / i
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
+        print(f"{r=}, {theta=}")
         # Normalize theta to be within the range [-pi, pi]
         theta = (theta + math.pi) % (2 * math.pi) - math.pi
         print(f"theta: {theta}, r: {r}")
@@ -123,6 +139,8 @@ class Robot:
         for _ in range(i):
             self.move_forward(r)
             sleep(0.5)
+        (robot_x, robot_y, robot_theta) = self.getMeanPos()
+        print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
 
 
     # Call when we move the robot forward
@@ -153,36 +171,32 @@ class Robot:
 
 
 if __name__ == "__main__":
-    try: 
-        # robot = Robot(100, 0.02, verbose=True)
-        
-        # corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
-        
-        # for a,b in zip(corners,corners[1:]):
-        #     draw_line(*a,*b)
-        
-        # for _ in range(4):
-        #     for _ in range(4):
-        #         robot.move_forward(10)
-        #         sleep(1)
-        #     robot.rotate((math.pi/2))
-        #     sleep(1)
-        # robot = Robot(100, 0.02, verbose=True)
-        # robot.update()
-        # robot.navigateToWaypoint(5, 0, 3)
-        # robot.navigateToWaypoint(5, 5, 3)
-        # robot.navigateToWaypoint(0, 5, 3)
-        # robot.navigateToWaypoint(0, 0, 3)
-        robot = Robot(100, 0.02, verbose=True)
-        robot.update()
-        
-        while True:
-            try:
-                x = float(input("Enter x coordinate: "))
-                y = float(input("Enter y coordinate: "))
-                robot.navigateToWaypoint(x, y, 4)
-            except ValueError:
-                print("Please enter valid numbers for coordinates")
-    except KeyboardInterrupt:
-        robot.BP.reset_all()
-        print("Tom is a gimp")
+    # robot = Robot(100, 0.02, verbose=True)
+    
+    # corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
+    
+    # for a,b in zip(corners,corners[1:]):
+    #     draw_line(*a,*b)
+    
+    # for _ in range(4):
+    #     for _ in range(4):
+    #         robot.move_forward(10)
+    #         sleep(1)
+    #     robot.rotate((math.pi/2))
+    #     sleep(1)
+    # robot = Robot(100, 0.02, verbose=True)
+    # robot.update()
+    # robot.navigateToWaypoint(5, 0, 3)
+    # robot.navigateToWaypoint(5, 5, 3)
+    # robot.navigateToWaypoint(0, 5, 3)
+    # robot.navigateToWaypoint(0, 0, 3)
+    robot = Robot(100, 0.02, verbose=True)
+    robot.update()
+    
+    while True:
+        try:
+            x = float(input("Enter x coordinate: "))
+            y = float(input("Enter y coordinate: "))
+            robot.navigateToWaypoint(x, y, 4)
+        except ValueError:
+            print("Please enter valid numbers for coordinates")
