@@ -114,7 +114,7 @@ class Robot:
         self.motorR = brickpi3.BrickPi3.PORT_B # right motor
         self.motorL = brickpi3.BrickPi3.PORT_C # left motor
         self.speed = 2
-        self.FWD_SCALING = 4.244 * (38 / 42.5) * 1.12 * 1/40 # IDK Chief
+        self.FWD_SCALING = (4.244 * (38 / 42.5) * 1.12 * 1/40) / 11 # IDK Chief
         self.TURN_SCALING = (1.1 * 2/math.pi) * SCALE
         self.driver = MotorDriver(self.motorL, self.motorR, self.speed)
         self.driver.flipR = True
