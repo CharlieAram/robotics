@@ -118,7 +118,7 @@ class Robot:
         self.motorR = brickpi3.BrickPi3.PORT_B # right motor
         self.motorL = brickpi3.BrickPi3.PORT_C # left motor
         self.speed = 2
-        self.FWD_SCALING = (4.244 * (38 / 42.5) * 1.12 * 1/40) / 11 # IDK Chief
+        self.FWD_SCALING = (4.244 * (38 / 42.5) * 1.12 * 1/40) # IDK Chief
         self.TURN_SCALING = (1.1 * 2/math.pi)
         self.driver = MotorDriver(self.motorL, self.motorR, self.speed)
         self.driver.flipR = True
@@ -194,16 +194,16 @@ if __name__ == "__main__":
     if VISUALISATION:
         robot = Robot(100, 0.02, VIS=True)
         
-        corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
+        corners = [(0,0), (40,0), (40,40), (0,40), (0,0)]
         
         for a,b in zip(corners,corners[1:]):
             draw_line(*a,*b)
         
-        for _ in range(4):
-            robot.move_forward(40)
-            sleep(1)
-            robot.rotate((math.pi/2))
-            sleep(1)
+        robot.navigateToWaypoint(40, 0)
+        robot.navigateToWaypoint(40, 40)
+        robot.navigateToWaypoint(0, 40)
+        robot.navigateToWaypoint(0, 0)
+
     else:
         robot = Robot(100, 0.02, VIS=False)
         robot.update()
@@ -212,6 +212,6 @@ if __name__ == "__main__":
             try:
                 x = float(input("Enter x coordinate: "))
                 y = float(input("Enter y coordinate: "))
-                robot.navigateToWaypoint(x, y, 10)
+                robot.navigateToWaypoint(x, y)
             except ValueError:
                 print("Please enter valid numbers for coordinates")
