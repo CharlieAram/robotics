@@ -139,7 +139,7 @@ class Robot:
         )
         return pos.x, pos.y, pos.theta
     
-    def navigateToWaypoint(self, x, y, i=1):
+    def navigateToWaypoint(self, x, y, i=10):
         robot_x, robot_y, robot_theta = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
         print(f"target x: {x}, target y: {y}")
@@ -204,7 +204,7 @@ if __name__ == "__main__":
             robot.rotate((math.pi/2))
             sleep(1)
     else:
-        robot = Robot(100, 0.02, VIS=True)
+        robot = Robot(100, 0.02, VIS=False)
         robot.update()
         
         while True:
