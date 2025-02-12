@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field, replace
 import math
 from random import gauss
 from time import sleep
-from typing import TYPE_CHECKING, Callable, ParamSpec, Concatenate, TypeVar
 import os
 
 if "pi" in os.path.expanduser("~").split(os.path.sep):
@@ -94,9 +95,12 @@ class ParticleCloud:
     def __iter__(self):
         return iter(self.particles)
 
+from typing import TYPE_CHECKING, Callable, TypeVar
 if TYPE_CHECKING:
+    from typing import ParamSpec, Concatenate
     P = ParamSpec("P")
     T = TypeVar("T")
+    
 
 def motion(f: Callable[Concatenate["Robot", P], T]) -> Callable[Concatenate["Robot", P], T]:
     def wrapper(self: "Robot", *args: P.args, **kwargs: P.kwargs) -> T:
