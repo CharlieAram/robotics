@@ -212,6 +212,6 @@ if __name__ == "__main__":
             try:
                 x = float(input("Enter x coordinate: "))
                 y = float(input("Enter y coordinate: "))
-                robot.navigateToWaypoint(x, y, 4)
+                robot.navigateToWaypoint(x, y, 10)
             except ValueError:
                 print("Please enter valid numbers for coordinates")
