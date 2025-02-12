@@ -26,7 +26,7 @@ else:
     brickpi3 = SelfReturningMock
 
 import sys
-VISUALISATION = bool(len(sys.argv) > 1)
+VISUALISATION = not bool(len(sys.argv) > 1)
 
 def rescale(x, y):
     return (x * 10 + 100, y * 10 + 100)
@@ -199,9 +199,8 @@ if __name__ == "__main__":
             draw_line(*a,*b)
         
         for _ in range(4):
-            for _ in range(4):
-                robot.move_forward(40)
-                sleep(1)
+            robot.move_forward(40)
+            sleep(1)
             robot.rotate((math.pi/2))
             sleep(1)
     else:
