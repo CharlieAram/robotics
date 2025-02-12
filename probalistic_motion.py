@@ -143,7 +143,7 @@ class Robot:
         robot_x, robot_y, robot_theta = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
         print(f"target x: {x}, target y: {y}")
-        r = (math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)) / i
+        r = (math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2))
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
         print(f"{r=}, {theta=}")
         # Normalize theta to be within the range [-pi, pi]
