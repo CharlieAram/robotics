@@ -126,7 +126,6 @@ class Robot:
 
         self.rotate(theta)
         for _ in range(i):
-            self.update()
             self.move_forward(r / i)
             sleep(0.5)
 
