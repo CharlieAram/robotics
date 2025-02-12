@@ -94,7 +94,7 @@ class Robot:
         self.motorR = self.BP.PORT_B # right motor
         self.motorL = self.BP.PORT_C # left motor
         self.speed = 2
-        self.FWD_SCALING = 4.244 * (38 / 42.5) * 1.12 * 1/40 # IDK Chief
+        self.FWD_SCALING = 1
         self.TURN_SCALING = (1.1 * 2/math.pi) * SCALE
         self.driver = MotorDriver(self.motorL, self.motorR, self.speed)
         self.driver.flipR = True
