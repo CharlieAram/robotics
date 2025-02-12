@@ -5,6 +5,8 @@ from time import sleep
 from typing import Callable
 import brickpi3
 from motor_driver import MotorDriver
+import sys
+SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 1
 
 VERBOSE = False
 def rescale(x, y):
@@ -92,8 +94,8 @@ class Robot:
         self.motorR = self.BP.PORT_B # right motor
         self.motorL = self.BP.PORT_C # left motor
         self.speed = 2
-        self.ROTS_FWD = 4.244 * (38 / 42.5) * 1.12 * 1/40 # IDK Chief
-        self.ROTS_TURN = 1.1 * 2/math.pi
+        self.FWD_SCALING = 4.244 * (38 / 42.5) * 1.12 * 1/40 # IDK Chief
+        self.TURN_SCALING = (1.1 * 2/math.pi) * SCALE
         self.driver = MotorDriver(self.motorL, self.motorR, self.speed)
         self.driver.flipR = True
         self.particle_cloud = ParticleCloud(
@@ -141,8 +143,8 @@ class Robot:
     @motion
     def move_forward(self, D):
         print("mean pos", self.getMeanPos())
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD * D))
-        self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_FWD * D))
+        self.BP.set_motor_position_relative(self.motorL, (360 * self.FWD_SCALING * D))
+        self.BP.set_motor_position_relative(self.motorR, -(360 * self.FWD_SCALING * D))
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
@@ -152,8 +154,8 @@ class Robot:
     @motion
     def rotate(self, angle):
         print("rot mean pos", self.getMeanPos())
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_TURN) * angle)
-        self.BP.set_motor_position_relative(self.motorR, (360 * self.ROTS_TURN) * angle)
+        self.BP.set_motor_position_relative(self.motorL, (360 * self.TURN_SCALING) * angle)
+        self.BP.set_motor_position_relative(self.motorR, (360 * self.TURN_SCALING) * angle)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(angle + epsilon)
