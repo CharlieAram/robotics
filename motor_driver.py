@@ -78,6 +78,11 @@ class MotorDriver:
         """
         Rotate the robot by an angle (in rotations)
         """
-        self.flipL = not self.flipL
-        self.move_forward(angle)
-        self.flipL = not self.flipL
+        if angle < 0:
+            self.flipR = not self.flipR
+            self.move_forward(-angle)
+            self.flipR = not self.flipR
+        else:
+            self.flipL = not self.flipL
+            self.move_forward(angle)
+            self.flipL = not self.flipL
