@@ -1,10 +1,39 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field, replace
 import math
 from random import gauss
 from time import sleep
-from typing import Callable
-import brickpi3
-from motor_driver import MotorDriver
+import os
+
+if "pi" in os.path.expanduser("~").split(os.path.sep):
+    import brickpi3
+    from motor_driver import MotorDriver
+else:
+
+    class SelfReturningMock:
+        BrickPi3: "SelfReturningMock"
+        flipR: bool
+
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+        def __getattribute__(self, name):
+            return self
+
+        def __getattr__(self, name):
+            return self
+
+        def __call__(self, *args, **kwargs):
+            return self
+
+    SelfReturningMock.BrickPi3 = SelfReturningMock()
+    MotorDriver = SelfReturningMock
+    brickpi3 = SelfReturningMock
+
+import sys
+
+VISUALISATION = not bool(len(sys.argv) > 1)
 
 
 def rescale(x, y):
@@ -19,12 +48,8 @@ def draw_line(x0: float, y0: float, x1: float, y1: float):
 
 def draw_particles(particles: list[tuple[float, float, float]]):  # x,y,theta
     particles = [(*rescale(x, y), theta) for (x, y, theta) in particles]
-    print(f"drawParticles: {particles}")
-
-
-def draw_particle(x: float, y: float, theta: float):
-    x, y = rescale(x, y)
-    print(f"drawParticles: [({x}, {y}, {theta})]")
+    if VISUALISATION:
+        print(f"drawParticles: {particles}")
 
 
 @dataclass
@@ -39,19 +64,30 @@ class Position:
 
     def rotate(self, angle: float):
         self.theta += angle
+        self.theta = self.normalise(self.theta)
 
     def __truediv__(self, other):
-        return Position(self.x / other, self.y / other, self.theta / other)
+        return Position(
+            self.x / other, self.y / other, self.normalise(self.theta / other)
+        )
 
     def __mul__(self, other):
-        return Position(self.x * other, self.y * other, self.theta * other)
+        return Position(
+            self.x * other, self.y * other, self.normalise(self.theta * other)
+        )
 
     def __add__(self, other):
-        return Position(self.x + other.x, self.y + other.y, self.theta + other.theta)
+        return Position(
+            self.x + other.x, self.y + other.y, self.normalise(self.theta + other.theta)
+        )
+
+    @staticmethod
+    def normalise(theta: float):
+        return (theta + math.pi) % (2 * math.pi) - math.pi
 
 
 @dataclass
-class weightedPosition:
+class WeightedPosition:
     pos: Position
     weight: float
 
@@ -62,42 +98,53 @@ class weightedPosition:
         self.pos.rotate(angle)
 
     def clone_with_weight(self, weight: float):
-        return weightedPosition(pos=replace(self.pos), weight=weight)
+        return WeightedPosition(pos=replace(self.pos), weight=weight)
 
 
 @dataclass
 class ParticleCloud:
-    particles: list[weightedPosition] = field(default_factory=list)
+    particles: list[WeightedPosition] = field(default_factory=list)
 
     def __iter__(self):
         return iter(self.particles)
 
 
-def motion(f: Callable[["Robot"], None]):
-    def wrapper(self: "Robot", *args, **kwargs):
-        f(self, *args, **kwargs)
-        self.update()
+from typing import TYPE_CHECKING, Callable, TypeVar
+
+if TYPE_CHECKING:
+    from typing import ParamSpec, Concatenate
+
+    P = ParamSpec("P")
+    T = TypeVar("T")
+
+
+def motion(
+    f: Callable[Concatenate["Robot", P], T],
+) -> Callable[Concatenate["Robot", P], T]:
+    def wrapper(self: "Robot", *args: P.args, **kwargs: P.kwargs) -> T:
+        try:
+            return f(self, *args, **kwargs)
+        finally:
+            self.update()
 
     return wrapper
 
 
 class Robot:
-    def __init__(self, num_points: int, sigma: float, verbose=False):
-        self.BP = brickpi3.BrickPi3()
-
+    def __init__(self, num_points: int, sigma: float, VIS=False):
         # Initialize the robot at the center of the world
         self.sigma = sigma
-        self.verbose = verbose
-        self.motorR = self.BP.PORT_B # right motor
-        self.motorL = self.BP.PORT_C # left motor
+        self.VIS = VIS
+        self.motorR = brickpi3.BrickPi3.PORT_B  # right motor
+        self.motorL = brickpi3.BrickPi3.PORT_C  # left motor
         self.speed = 2
-        self.ROTS_FWD = 4.244 * (38 / 42.5) * 1.12 * 1/40 # IDK Chief
-        self.ROTS_TURN = 1.1 * 2/math.pi
+        self.FWD_SCALING = 4.244 * (38 / 42.5) * 1.12 * 1 / 40  # IDK Chief
+        self.TURN_SCALING = 1.1 * 2 / math.pi
         self.driver = MotorDriver(self.motorL, self.motorR, self.speed)
         self.driver.flipR = True
         self.particle_cloud = ParticleCloud(
             [
-                weightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
+                WeightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
                 for _ in range(num_points)
             ]
         )
@@ -109,72 +156,81 @@ class Robot:
                 for particle in self.particle_cloud.particles
             ],
             Position(0, 0, 0),
-        ) / len(self.particle_cloud.particles)
+        )
         return pos.x, pos.y, pos.theta
 
-    def navigateToWaypoint(self, x, y):
-        (robot_x, robot_y, robot_theta) = self.getMeanPos()
+    def navigateToWaypoint(self, x, y, i=10):
+        robot_x, robot_y, robot_theta = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
+        print(f"target x: {x}, target y: {y}")
         r = math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
+        print(f"{r=}, {theta=}")
+        # Normalize theta to be within the range [-pi, pi]
+        theta = (theta + math.pi) % (2 * math.pi) - math.pi
         print(f"theta: {theta}, r: {r}")
-        self.driver.rotate(theta)
-        for particle in self.particle_cloud:
-            epsilon = gauss(0, self.sigma)
-            particle.rotate(theta + epsilon)
-        self.driver.move_forward(r)
-        for particle in self.particle_cloud:
-            epsilon = gauss(0, self.sigma)
-            particle.rotate(epsilon)
-            particle.move_forward(r)
+
+        self.rotate(theta)
+        while r > i:
+            self.move_forward(i)
+            r -= i
+            sleep(0.5)
+
+        self.move_forward(r)
+        sleep(0.5)
+        (robot_x, robot_y, robot_theta) = self.getMeanPos()
+        print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
 
     # Call when we move the robot forward
     @motion
     def move_forward(self, D):
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_FWD * D))
-        self.BP.set_motor_position_relative(self.motorR, -(360 * self.ROTS_FWD * D))
+        print(f"move_forward: {D}")
+        self.driver.move_forward(D * self.FWD_SCALING)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(epsilon)
             particle.move_forward(D)
+        print("mean pos", self.getMeanPos())
 
     # Call when we rotate the robot at each corner
     @motion
     def rotate(self, angle):
-        self.BP.set_motor_position_relative(self.motorL, (360 * self.ROTS_TURN) * angle)
-        self.BP.set_motor_position_relative(self.motorR, (360 * self.ROTS_TURN) * angle)
+        self.driver.rotate(angle * self.TURN_SCALING)
         for particle in self.particle_cloud:
             epsilon = gauss(0, self.sigma)
             particle.rotate(angle + epsilon)
+        print("rot mean pos", self.getMeanPos())
 
     def update(self):
-        print("Updating")
-        if self.verbose:
+        print("updating")
+        if self.VIS:
             draw_particles(
                 [(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud]
             )
 
 
 if __name__ == "__main__":
-    try: 
-        # robot = Robot(100, 0.02, verbose=True)
-        
-        # corners = [(0,0),(40,0),(40,40),(0,40),(0,0)]
-        
-        # for a,b in zip(corners,corners[1:]):
-        #     draw_line(*a,*b)
-        
-        # for _ in range(4):
-        #     for _ in range(4):
-        #         robot.driver.move_forward(40)
-        #         sleep(1)
-        #     robot.driver.rotate(90)
-        #     sleep(1)
-        robot = Robot(100, 0.02, verbose=True)
-        robot.navigateToWaypoint(5, 0)
-        robot.navigateToWaypoint(5, 5)
-        robot.navigateToWaypoint(0, 5)
-        robot.navigateToWaypoint(0, 0)
-    except KeyboardInterrupt:
-        robot.BP.reset_all()
-        print("Tom is a gimp")
+    if VISUALISATION:
+        robot = Robot(100, 0.02, VIS=True)
+
+        corners = [(0, 0), (40, 0), (40, 40), (0, 40), (0, 0)]
+
+        for a, b in zip(corners, corners[1:]):
+            draw_line(*a, *b)
+
+        for _ in range(4):
+            robot.move_forward(40)
+            sleep(1)
+            robot.rotate((math.pi / 2))
+            sleep(1)
+    else:
+        robot = Robot(100, 0.02, VIS=False)
+        robot.update()
+
+        while True:
+            try:
+                x = float(input("Enter x coordinate: "))
+                y = float(input("Enter y coordinate: "))
+                robot.navigateToWaypoint(x, y, 10)
+            except ValueError:
+                print("Please enter valid numbers for coordinates")
