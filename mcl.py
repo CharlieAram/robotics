@@ -91,8 +91,9 @@ class NormRobot(Robot):
 
     @override
     def update(self):
-        if x:=self.sensor_reading() is not None:
-            self.normalise_probs(*self.getMeanPos(), x)
+        while (x:=self.sensor_reading()) is None:
+            pass
+        self.normalise_probs(*self.getMeanPos(), x)
         super().update()
 
 
