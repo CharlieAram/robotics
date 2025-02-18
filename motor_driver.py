@@ -34,7 +34,11 @@ class MotorDriver:
         return self.read_left(), self.read_right()
     
     def read_sensor(self):
-        return self.BP.get_sensor(self.sensor)
+        try:
+            return self.BP.get_sensor(self.sensor)
+        except brickpi3.SensorError:
+            return None 
+            
     
     def write_left(self, val):
         if self.flipL:
