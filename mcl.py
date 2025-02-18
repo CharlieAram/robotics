@@ -82,7 +82,7 @@ class NormRobot(Robot):
         self.particle_cloud.particles = [
             p.clone_with_weight(prob)
             for p, prob in choices(
-                zip(self.particle_cloud.particles, likelihoods),
+                list(zip(self.particle_cloud.particles, likelihoods)),
                 likelihoods,
                 k=len(self.particle_cloud.particles),
             )
@@ -110,12 +110,12 @@ if __name__ == "__main__":
             (84, 30)
         ]
 
-        for wall in WALLS:
-            draw_line(wall)
+        for wall in WALLS.values():
+            draw_line(wall[0][0], wall[0][1], wall[1][0], wall[1][1])
         
         start = (0, 0)
         for (a, b) in waypoints:
-            draw_line((start, (a, b)))
+            draw_line(start[0], start[1], a, b)
             robot.navigateToWaypoint(a, b, 10)
             sleep(1)
 
