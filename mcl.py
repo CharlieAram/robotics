@@ -69,8 +69,8 @@ def calculate_likelihood(x, y, theta, z):
 
 
 class NormRobot(Robot):
-    def sensor_reading(self) -> float:
-        return self.driver.read_sensor()
+    def sensor_reading(self) -> float | None:
+        return self.driver.read_sensor() 
 
     def normalise_probs(self, x, y, theta, z):
         likelihoods = [
@@ -91,7 +91,8 @@ class NormRobot(Robot):
 
     @override
     def update(self):
-        self.normalise_probs(*self.getMeanPos(), self.sensor_reading())
+        if x:=self.sensor_reading() is not None:
+            self.normalise_probs(*self.getMeanPos(), x)
         super().update()
 
 
