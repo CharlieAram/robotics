@@ -39,25 +39,34 @@ if "pi" in os.path.expanduser("~").split(os.path.sep):
     import brickpi3
     from motor_driver import MotorDriver
 else:
+
     class SelfReturningMock:
         BrickPi3: "SelfReturningMock"
         flipR: bool
+
         def __init__(self, *args, **kwargs) -> None:
             pass
+
         def __getattribute__(self, name):
             return self
+
         def __getattr__(self, name):
             return self
+
         def __call__(self, *args, **kwargs):
             return self
+
     SelfReturningMock.BrickPi3 = SelfReturningMock()
     MotorDriver = SelfReturningMock
     brickpi3 = SelfReturningMock
 
 import sys
+
 SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 1
 
 VERBOSE = False
+
+
 def rescale(x, y):
     return (x * 10 + 100, y * 10 + 100)
 
@@ -130,8 +139,6 @@ class ParticleCloud:
     def __iter__(self):
         return iter(self.particles)
 
-P = ParamSpec("P")
-T = TypeVar("T")
 
 from typing import TYPE_CHECKING, Callable, TypeVar
 
@@ -150,6 +157,7 @@ def motion(
             return f(self, *args, **kwargs)
         finally:
             self.update()
+
     return wrapper
 
 

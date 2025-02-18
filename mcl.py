@@ -4,6 +4,7 @@ from probalistic_motion import Robot
 from random import choices
 from copy import deepcopy
 import brickpi3
+
 # Start and end point of each wall
 WALLS = {
     "OA": [(0, 0), (0, 168)],
@@ -43,7 +44,6 @@ def distance_to_wall(x, y, theta, wall: str):
 # x, y, theta: current position and orientation of the robot
 # z is the sonar measurement
 def calculate_likelihood(x, y, theta, z):
-
     # Find which wall the sonar beam would hit to then use in calculation
     dist, _ = min([(distance_to_wall(x, y, theta, wall), wall) for wall in WALLS])
 
@@ -58,7 +58,7 @@ def calculate_likelihood(x, y, theta, z):
 
 class NormRobot(Robot):
     def sensor_reading(self) -> float:
-        return self.driver.read_sensor()  # TODO: Implement sensor reading
+        return self.driver.read_sensor()  
 
     def normalise_probs(self, x, y, theta, z):
         likelihoods = [
