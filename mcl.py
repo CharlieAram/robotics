@@ -1,6 +1,11 @@
 import math
 from time import sleep
-from typing import override
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import override
+else:
+    override = lambda x: x
 from draw import draw_line
 from probalistic_motion import Robot
 from random import choices
