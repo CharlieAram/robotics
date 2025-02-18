@@ -1,9 +1,16 @@
 import math
+from time import sleep
 from typing import override
+from draw import draw_line
 from probalistic_motion import Robot
 from random import choices
 from copy import deepcopy
 import brickpi3
+import sys
+
+
+VISUALISATION = not bool(len(sys.argv) > 1)
+
 
 # Start and end point of each wall
 WALLS = {
@@ -58,7 +65,7 @@ def calculate_likelihood(x, y, theta, z):
 
 class NormRobot(Robot):
     def sensor_reading(self) -> float:
-        return self.driver.read_sensor()  
+        return self.driver.read_sensor()
 
     def normalise_probs(self, x, y, theta, z):
         likelihoods = [
@@ -80,3 +87,30 @@ class NormRobot(Robot):
     def update(self):
         self.normalise_probs(*self.getMeanPos(), self.sensor_reading())
         super().update()
+
+
+if __name__ == "__main__":
+    if VISUALISATION:
+        robot = NormRobot(100, 0.02, VIS=True)
+
+        corners = [(0, 0), (40, 0), (40, 40), (0, 40), (0, 0)]
+
+        for a, b in zip(corners, corners[1:]):
+            draw_line(*a, *b)
+
+        for _ in range(4):
+            robot.move_forward(40)
+            sleep(1)
+            robot.rotate((math.pi / 2))
+            sleep(1)
+    else:
+        robot = NormRobot(100, 0.02, VIS=False)
+        robot.update()
+
+        while True:
+            try:
+                x = float(input("Enter x coordinate: "))
+                y = float(input("Enter y coordinate: "))
+                robot.navigateToWaypoint(x, y, 10)
+            except ValueError:
+                print("Please enter valid numbers for coordinates")
