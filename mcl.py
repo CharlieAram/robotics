@@ -3,7 +3,7 @@ from typing import override
 from probalistic_motion import Robot
 from random import choices
 from copy import deepcopy
-
+import brickpi3
 # Start and end point of each wall
 WALLS = {
     "OA": [(0, 0), (0, 168)],
@@ -58,7 +58,7 @@ def calculate_likelihood(x, y, theta, z):
 
 class NormRobot(Robot):
     def sensor_reading(self) -> float:
-        return 1  # TODO: Implement sensor reading
+        return self.driver.read_sensor()  # TODO: Implement sensor reading
 
     def normalise_probs(self, x, y, theta, z):
         likelihoods = [

@@ -15,6 +15,8 @@ class MotorDriver:
         self.motorL = motorL
         self.motorR = motorR
         self.flipL = self.flipR = False
+        self.sensor = self.BP.PORT_1
+        self.BP.set_sensor_type(self.sensor, self.BP.SENSOR_TYPE.NXT_ULTRASONIC)
 
     def read_left(self):
         res = self.BP.get_motor_encoder(self.motorL)
@@ -30,6 +32,9 @@ class MotorDriver:
     
     def read(self):
         return self.read_left(), self.read_right()
+    
+    def read_sensor(self):
+        return self.BP.get_sensor(self.sensor)
     
     def write_left(self, val):
         if self.flipL:
