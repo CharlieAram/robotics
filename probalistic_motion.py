@@ -5,32 +5,6 @@ import math
 from random import gauss
 from time import sleep
 import os
-
-if "pi" in os.path.expanduser("~").split(os.path.sep):
-    import brickpi3
-    from motor_driver import MotorDriver
-else:
-
-    class SelfReturningMock:
-        BrickPi3: "SelfReturningMock"
-        flipR: bool
-
-        def __init__(self, *args, **kwargs) -> None:
-            pass
-
-        def __getattribute__(self, name):
-            return self
-
-        def __getattr__(self, name):
-            return self
-
-        def __call__(self, *args, **kwargs):
-            return self
-
-    SelfReturningMock.BrickPi3 = SelfReturningMock()
-    MotorDriver = SelfReturningMock
-    brickpi3 = SelfReturningMock
-
 import sys
 
 VISUALISATION = not bool(len(sys.argv) > 1)
