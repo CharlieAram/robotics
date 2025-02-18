@@ -105,10 +105,12 @@ if __name__ == "__main__":
             (84, 30)
         ]
 
-        for a, b in zip(waypoints, waypoints[1:]):
-            draw_line(*a, *b)
-
+        for wall in WALLS:
+            draw_line(wall)
+        
+        start = (0, 0)
         for (a, b) in waypoints:
+            draw_line((start, (a, b)))
             robot.navigateToWaypoint(a, b, 10)
             sleep(1)
 
