@@ -93,16 +93,25 @@ if __name__ == "__main__":
     if VISUALISATION:
         robot = NormRobot(100, 0.02, VIS=True)
 
-        corners = [(0, 0), (40, 0), (40, 40), (0, 40), (0, 0)]
+        waypoints = [
+            (84, 30),
+            (180, 30),
+            (180, 54),
+            (138, 54),
+            (138, 168),
+            (114, 168),
+            (114, 84),
+            (84, 84),
+            (84, 30)
+        ]
 
-        for a, b in zip(corners, corners[1:]):
+        for a, b in zip(waypoints, waypoints[1:]):
             draw_line(*a, *b)
 
-        for _ in range(4):
-            robot.move_forward(40)
+        for (a, b) in waypoints:
+            robot.navigateToWaypoint(a, b, 10)
             sleep(1)
-            robot.rotate((math.pi / 2))
-            sleep(1)
+
     else:
         robot = NormRobot(100, 0.02, VIS=False)
         robot.update()
