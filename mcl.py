@@ -74,7 +74,8 @@ class NormRobot(Robot):
 
     def normalise_probs(self, x, y, theta, z):
         likelihoods = [
-            calculate_likelihood(x, y, theta, z) for _ in self.particle_cloud
+            # Baseline 5% error rate
+            max(0.05, calculate_likelihood(x, y, theta, z)) for _ in self.particle_cloud
         ]
         total = sum(likelihoods)
         likelihoods = [l / total for l in likelihoods]
