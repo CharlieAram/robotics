@@ -6,6 +6,7 @@ from random import gauss
 from time import sleep
 import os
 import sys
+from draw import draw_line, draw_particles
 
 VISUALISATION = not bool(len(sys.argv) > 1)
 
@@ -39,22 +40,6 @@ import sys
 SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 1
 
 VERBOSE = False
-
-
-def rescale(x, y):
-    return (x * 10 + 100, y * 10 + 100)
-
-
-def draw_line(x0: float, y0: float, x1: float, y1: float):
-    x0, y0 = rescale(x0, y0)
-    x1, y1 = rescale(x1, y1)
-    print(f"drawLine: ({x0}, {y0}, {x1}, {y1})")
-
-
-def draw_particles(particles: list[tuple[float, float, float]]):  # x,y,theta
-    particles = [(*rescale(x, y), theta) for (x, y, theta) in particles]
-    if VISUALISATION:
-        print(f"drawParticles: {particles}")
 
 
 @dataclass
@@ -136,7 +121,7 @@ def motion(
 
 
 class Robot:
-    def __init__(self, num_points: int, sigma: float, VIS=False):
+    def __init__(self, num_points: int, sigma: float, start_x: float = 0.0, start_y: float = 0.0, start_theta: float = 0.0, VIS=False):
         # Initialize the robot at the center of the world
         self.sigma = sigma
         self.VIS = VIS
@@ -149,7 +134,7 @@ class Robot:
         self.driver.flipR = True
         self.particle_cloud = ParticleCloud(
             [
-                WeightedPosition(pos=Position(0.0, 0.0, 0.0), weight=1.0 / num_points)
+                WeightedPosition(pos=Position(start_x, start_y, start_theta), weight=1.0 / num_points)
                 for _ in range(num_points)
             ]
         )

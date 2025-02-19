@@ -69,8 +69,10 @@ def calculate_likelihood(x, y, theta, z):
 
 
 class NormRobot(Robot):
-    def sensor_reading(self) -> float | None:
-        return self.driver.read_sensor() 
+    def sensor_reading(self) -> float:
+        while (x:=self.driver.read_sensor()) is None:
+            pass
+        return x
 
     def normalise_probs(self, x, y, theta, z):
         likelihoods = [
@@ -91,15 +93,13 @@ class NormRobot(Robot):
 
     @override
     def update(self):
-        while (x:=self.sensor_reading()) is None:
-            pass
-        self.normalise_probs(*self.getMeanPos(), x)
+        self.normalise_probs(*self.getMeanPos(), self.sensor_reading())
         super().update()
 
 
 if __name__ == "__main__":
     if VISUALISATION:
-        robot = NormRobot(100, 0.02, VIS=True)
+        robot = NormRobot(100, 0.02, start_x=84, start_y=30, VIS=True)
 
         waypoints = [
             (84, 30),
@@ -116,12 +116,12 @@ if __name__ == "__main__":
         for wall in WALLS.values():
             draw_line(wall[0][0], wall[0][1], wall[1][0], wall[1][1])
         
-        start = (0, 0)
-        for (a, b) in waypoints:
+        start = waypoints[0]
+        for (a, b) in waypoints[1:]:
             draw_line(start[0], start[1], a, b)
             robot.navigateToWaypoint(a, b, 10)
+            start = (a, b)
             sleep(1)
-
     else:
         robot = NormRobot(100, 0.02, VIS=False)
         robot.update()

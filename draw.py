@@ -1,10 +1,13 @@
+def rescale(x, y):
+    return (x * 10 + 100, y * 10 + 100)
+
+
 def draw_line(x0: float, y0: float, x1: float, y1: float):
+    x0, y0 = rescale(x0, y0)
+    x1, y1 = rescale(x1, y1)
     print(f"drawLine: ({x0}, {y0}, {x1}, {y1})")
 
 
 def draw_particles(particles: list[tuple[float, float, float]]):  # x,y,theta
+    particles = [(*rescale(x, y), theta) for (x, y, theta) in particles]
     print(f"drawParticles: {particles}")
-
-
-def draw_particle(x: float, y: float, theta: float):
-    print(f"drawParticles: [({x}, {y}, {theta})]")
