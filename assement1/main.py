@@ -132,7 +132,7 @@ try:
             while distance > 116:
                 back(creep_speed)
                 distance = read_sensor()
-                print(distance)
+                print(distance + "\r")
                 time.sleep(0.01)
             stop()
         time.sleep(0.01)  # sleep for 10 ms
