@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from typing import override
 else:
     override = lambda x: x
-from draw import draw_line
+from draw import draw_line, draw_cross
 from probalistic_motion import Robot
 from random import choices
 from copy import deepcopy
@@ -115,7 +115,9 @@ if __name__ == "__main__":
 
         for wall in WALLS.values():
             draw_line(wall[0][0], wall[0][1], wall[1][0], wall[1][1])
-        
+        for waypoint in waypoints:
+            draw_cross(*waypoint)
+
         start = waypoints[0]
         for (a, b) in waypoints[1:]:
             draw_line(start[0], start[1], a, b)
