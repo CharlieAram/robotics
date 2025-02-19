@@ -123,7 +123,7 @@ if __name__ == "__main__":
             draw_line(start[0], start[1], a, b)
             robot.navigateToWaypoint(a, b, 10)
             start = (a, b)
-            sleep(1)
+            sleep(3)
     else:
         robot = NormRobot(100, 0.02, VIS=False)
         robot.update()
