@@ -69,7 +69,7 @@ def calculate_likelihood(x, y, theta, z):
     # )
 
     # TODO: Need to add reasonable constant
-    return math.exp(-((z - dist) ** 2) / (2 * SD**2))
+    return dist, math.exp(-((z - dist) ** 2) / (2 * SD**2))
 
 
 class NormRobot(Robot):
@@ -85,13 +85,16 @@ class NormRobot(Robot):
         return readings[4]
 
     def normalise_probs(self, z):
-        likelihoods = [
-            # Baseline 1% error rate
-            max(0.01, calculate_likelihood(p.pos.x, p.pos.y, p.pos.theta, z))
-            for p in self.particle_cloud
-        ]
-        total = sum(likelihoods)
-        likelihoods = [l / total for l in likelihoods]
+        probs, dists = [], []
+
+        for p in self.particle_cloud:
+            prob,dist = calculate_likelihood(p.pos.x, p.pos.y, p.pos.theta, z)
+            probs.append(max(0.01, prob)) # Baseline 1% error rate
+            dists.append(dist)
+
+        print(sum(dists) / len(dists))
+        total = sum(probs)
+        likelihoods = [l / total for l in probs]
 
         self.particle_cloud.particles = [
             p.clone_with_weight(prob)
