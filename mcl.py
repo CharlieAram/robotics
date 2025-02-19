@@ -2,6 +2,7 @@ import math
 from time import sleep
 
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from typing import override
 else:
@@ -33,7 +34,7 @@ WALLS = {
 SD = 2.5  # Standard deviation of the sonar sensor
 
 
-def distance_to_wall(x, y, theta, wall: str):
+def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
     # Get the start and end points of the wall
     (ax, ay), (bx, by) = WALLS[wall]
 
@@ -45,6 +46,9 @@ def distance_to_wall(x, y, theta, wall: str):
 
     int_x = x + dist * c
     int_y = y + dist * s
+
+    if dist < 0:
+        return float("inf")
 
     # Check if the intersection point is within the wall
     if (int_x - ax) * (int_x - bx) > 0 or (int_y - ay) * (int_y - by) > 0:
@@ -78,13 +82,14 @@ class NormRobot(Robot):
                 readings.append(x)
             sleep(0.01)
         readings.sort()
-        print("sensor reading=",readings[4])
+        print("sensor reading=", readings[4])
         return readings[4]
 
     def normalise_probs(self, x, y, theta, z):
         likelihoods = [
             # Baseline 5% error rate
-            max(0.01, calculate_likelihood(p.pos.x, p.pos.y, p.pos.theta, z)) for p in self.particle_cloud
+            max(0.01, calculate_likelihood(p.pos.x, p.pos.y, p.pos.theta, z))
+            for p in self.particle_cloud
         ]
         total = sum(likelihoods)
         likelihoods = [l / total for l in likelihoods]
@@ -117,7 +122,7 @@ if __name__ == "__main__":
             (114, 168),
             (114, 84),
             (84, 84),
-            (84, 30)
+            (84, 30),
         ]
 
         for wall in WALLS.values():
@@ -126,7 +131,7 @@ if __name__ == "__main__":
             draw_cross(*waypoint)
 
         start = waypoints[0]
-        for (a, b) in waypoints[1:]:
+        for a, b in waypoints[1:]:
             draw_line(start[0], start[1], a, b)
             robot.navigateToWaypoint(a, b, 10)
             start = (a, b)
