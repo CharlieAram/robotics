@@ -165,6 +165,11 @@ class Robot:
         r, theta = self.getTargeting(x, y)
         print(f"{r=}, {theta=}")
         self.rotate(theta)
+
+        # Assume that we are at the right angle now
+        r, theta = self.getTargeting(x, y)
+        if abs(theta) > 10 * 3.14159/180:
+            print(f"WARNING: {theta} angle error!")
         if r > i:
             self.move_forward(i)
             sleep(0.5)
