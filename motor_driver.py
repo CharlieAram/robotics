@@ -29,22 +29,23 @@ class MotorDriver:
         if self.flipR:
             return -res
         return res
-    
+
     def read(self):
         return self.read_left(), self.read_right()
-    
+
     def read_sensor(self):
         try:
-            return (self.BP.get_sensor(self.sensor)+10) #10 is offset to account for the fact that the sensor is not at the center of the robot. idek chief if 10 is accurate
+            return (
+                self.BP.get_sensor(self.sensor) + 10
+            )  # 10 is offset to account for the fact that the sensor is not at the center of the robot. idek chief if 10 is accurate
         except brickpi3.SensorError:
-            return None 
-            
-    
+            return None
+
     def write_left(self, val):
         if self.flipL:
             val = -val
         self.BP.set_motor_power(self.motorL, val)
-    
+
     def write_right(self, val):
         if self.flipR:
             val = -val
@@ -67,7 +68,7 @@ class MotorDriver:
         self.write_left(20 * self.SCALE)
         self.write_right(20 * self.SCALE)
 
-        l,r = self.read()
+        l, r = self.read()
         t = time.time()
         while l < targetL or r < targetR:
             if l < targetL and r < targetR and time.time() - t > 0.4:
@@ -77,7 +78,7 @@ class MotorDriver:
                 self.write_right((20 + ratio) * self.SCALE)
                 t = time.time()
 
-            l,r = self.read()
+            l, r = self.read()
             if l >= targetL:
                 self.write_left(0)
             if r >= targetR:
