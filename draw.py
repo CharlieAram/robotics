@@ -1,7 +1,5 @@
 def rescale(x, y):
-    # Flip x and y, then rotate 90 degrees
-    # Rotation by 90 degrees: (x,y) -> (-y,x)
-    return (-y * 3 + 300, x * 3 + 10)
+    return (x * 3 + 10, y * 3 + 10)
 
 
 def draw_line(x0: float, y0: float, x1: float, y1: float):
