@@ -49,6 +49,7 @@ BP = (
 )  # Create an instance of the BrickPi3 class. BP will be the BrickPi3 object.
 motorR = BP.PORT_B  # right motor
 motorL = BP.PORT_C  # left motor
+BP.set_sensor_type(BP.PORT_1, BP.SENSOR_TYPE.NXT_ULTRASONIC)
 speed = 170  # range is -255 to 255, make lower if bot it too fast
 boost_speed = 100
 turn_speed = 230
@@ -83,6 +84,11 @@ def stop():
     BP.set_motor_power(motorR, 0)
     BP.set_motor_power(motorL, 0)
 
+def read_sensor():
+    try:
+        return (BP.get_sensor(BP.PORT_1)+ 10) #10 is offset to account for the fact that the sensor is not at the center of the robot. idek chief if 10 is accurate
+    except brickpi3.SensorError:
+        return 999 
 
 # def boost():
 #         BP.set_motor_power(motorR, -boost_speed)
@@ -115,6 +121,16 @@ try:
         elif inp == "b":
             fwd(boost_speed)
             print("boost")
+
+        elif inp == "c":
+            inp2 = stdscr.getkey()
+            fwd(turn_speed)
+            print("creep")
+            while inp2 != "c":
+                print(read_sensor())
+                inp2 = stdscr.getkey()
+                time.sleep(0.05)
+            stop()
         time.sleep(0.01)  # sleep for 10 ms
 except KeyboardInterrupt:
     BP.reset_all()
