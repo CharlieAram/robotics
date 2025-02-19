@@ -151,22 +151,25 @@ class Robot:
         )
         return pos.x, pos.y, pos.theta
 
-    def navigateToWaypoint(self, x, y, i=10):
+    def getTargeting(self, x: float, y: float):
         robot_x, robot_y, robot_theta = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
         print(f"target x: {x}, target y: {y}")
         r = math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
-        print(f"{r=}, {theta=}")
         # Normalize theta to be within the range [-pi, pi]
         theta = (theta + math.pi) % (2 * math.pi) - math.pi
-        print(f"theta: {theta}, r: {r}")
+        return r, theta
 
+    def navigateToWaypoint(self, x, y, i=10):
+        r, theta = self.getTargeting(x, y)
+        print(f"{r=}, {theta=}")
         self.rotate(theta)
-        while r > i:
+        if r > i:
             self.move_forward(i)
-            r -= i
             sleep(0.5)
+            self.navigateToWaypoint(x, y)
+            return
 
         self.move_forward(r)
         sleep(0.5)
