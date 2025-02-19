@@ -47,6 +47,7 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
     int_x = x + dist * c
     int_y = y + dist * s
 
+    # The wall is behind you, you should not be able to sense it
     if dist < 0:
         return float("inf")
 
