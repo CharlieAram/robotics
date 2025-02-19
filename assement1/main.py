@@ -98,6 +98,7 @@ def read_sensor():
 #         BP.set_motor_power(motorL, -boost_speed)
 
 try:
+    print_sensor = False
     while True:
         inp = stdscr.getkey()  # Take input from the terminal
         # Move the bot
@@ -118,6 +119,7 @@ try:
             print("back")
 
         elif inp == "/" or inp == "x":
+            print_sensor = False
             stop()
             print("stop")
 
@@ -128,12 +130,11 @@ try:
         elif inp == "c":
             inp2 = "a"
             back(creep_speed)
+            print_sensor = True
             print("creep")
-            while inp2 != "c":
-                print(read_sensor())
-                inp2 = stdscr.getkey()
-                time.sleep(0.05)
-            stop()
+
+        if print_sensor:
+            print(read_sensor())
         time.sleep(0.01)  # sleep for 10 ms
 except KeyboardInterrupt:
     BP.reset_all()
