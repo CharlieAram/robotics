@@ -86,9 +86,9 @@ class NormRobot(Robot):
         print("sensor reading=", readings[4])
         return readings[4]
 
-    def normalise_probs(self, x, y, theta, z):
+    def normalise_probs(self, z):
         likelihoods = [
-            # Baseline 5% error rate
+            # Baseline 1% error rate
             max(0.01, calculate_likelihood(p.pos.x, p.pos.y, p.pos.theta, z))
             for p in self.particle_cloud
         ]
@@ -106,7 +106,7 @@ class NormRobot(Robot):
 
     @override
     def update(self):
-        self.normalise_probs(*self.getMeanPos(), self.sensor_reading())
+        self.normalise_probs(self.sensor_reading())
         super().update()
 
 
