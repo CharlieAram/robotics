@@ -35,7 +35,7 @@ class MotorDriver:
     
     def read_sensor(self):
         try:
-            return self.BP.get_sensor(self.sensor)
+            return (self.BP.get_sensor(self.sensor)+ 10) #10 is offset to account for the fact that the sensor is not at the center of the robot. idek chief if 10 is accurate
         except brickpi3.SensorError:
             return None 
             
