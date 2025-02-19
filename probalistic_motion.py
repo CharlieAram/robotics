@@ -124,6 +124,9 @@ class Robot:
     def __init__(self, num_points: int, sigma: float, start_x: float = 0.0, start_y: float = 0.0, start_theta: float = 0.0, VIS=False):
         # Initialize the robot at the center of the world
         self.sigma = sigma
+        self.e = 0.5 # Fwd dist uncertainty
+        self.f = 0.5 # Fwd rot uncertainty
+        self.g = 0.5 # pure rotation uncertainty
         self.VIS = VIS
         self.motorR = brickpi3.BrickPi3.PORT_B  # right motor
         self.motorL = brickpi3.BrickPi3.PORT_C  # left motor
@@ -177,9 +180,10 @@ class Robot:
         print(f"move_forward: {D}")
         self.driver.move_forward(D * self.FWD_SCALING)
         for particle in self.particle_cloud:
-            epsilon = gauss(0, self.sigma)
-            particle.rotate(epsilon)
-            particle.move_forward(D)
+            e = gauss(0, self.e)
+            f = gauss(0, self.f)
+            particle.move_forward(D + e)
+            particle.rotate(f)
         print("mean pos", self.getMeanPos())
 
     # Call when we rotate the robot at each corner
@@ -187,8 +191,8 @@ class Robot:
     def rotate(self, angle):
         self.driver.rotate(angle * self.TURN_SCALING)
         for particle in self.particle_cloud:
-            epsilon = gauss(0, self.sigma)
-            particle.rotate(angle + epsilon)
+            g = gauss(0, self.g)
+            particle.rotate(angle + g)
         print("rot mean pos", self.getMeanPos())
 
     def update(self):
