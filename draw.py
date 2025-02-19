@@ -1,5 +1,5 @@
 def rescale(x, y):
-    return (x * 10 + 100, y * 10 + 100)
+    return (x * 4 + 10, y * 4 + 10)
 
 
 def draw_line(x0: float, y0: float, x1: float, y1: float):
