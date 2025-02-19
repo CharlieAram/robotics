@@ -121,9 +121,8 @@ def motion(
 
 
 class Robot:
-    def __init__(self, num_points: int, sigma: float, start_x: float = 0.0, start_y: float = 0.0, start_theta: float = 0.0, VIS=False):
+    def __init__(self, num_points: int, start_x: float = 0.0, start_y: float = 0.0, start_theta: float = 0.0, VIS=False):
         # Initialize the robot at the center of the world
-        self.sigma = sigma
         self.e = 0.5 # Fwd dist uncertainty
         self.f = 0.5 # Fwd rot uncertainty
         self.g = 0.5 # pure rotation uncertainty
@@ -205,7 +204,7 @@ class Robot:
 
 if __name__ == "__main__":
     if VISUALISATION:
-        robot = Robot(100, 0.02, VIS=True)
+        robot = Robot(100, VIS=True)
 
         corners = [(0, 0), (40, 0), (40, 40), (0, 40), (0, 0)]
 
@@ -218,7 +217,7 @@ if __name__ == "__main__":
             robot.rotate((math.pi / 2))
             sleep(1)
     else:
-        robot = Robot(100, 0.02, VIS=False)
+        robot = Robot(100, VIS=False)
         robot.update()
 
         while True:
