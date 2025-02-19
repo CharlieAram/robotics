@@ -63,8 +63,6 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
 def calculate_likelihood(x, y, theta, z):
     # Find which wall the sonar beam would hit to then use in calculation
     dist, _ = min([(distance_to_wall(x, y, theta, wall), wall) for wall in WALLS])
-    print("exp dist=", dist)
-
     # beta = math.acos(
     #     (math.cos(theta) * (ay - by) + math.sin(theta) * (bx - ax)) /
     #     (math.sqrt((ay - by)**2 + (bx - ax)**2))
