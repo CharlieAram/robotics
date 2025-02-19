@@ -58,6 +58,7 @@ def distance_to_wall(x, y, theta, wall: str):
 def calculate_likelihood(x, y, theta, z):
     # Find which wall the sonar beam would hit to then use in calculation
     dist, _ = min([(distance_to_wall(x, y, theta, wall), wall) for wall in WALLS])
+    print("exp dist=", dist)
 
     # beta = math.acos(
     #     (math.cos(theta) * (ay - by) + math.sin(theta) * (bx - ax)) /
@@ -77,7 +78,7 @@ class NormRobot(Robot):
                 readings.append(x)
             sleep(0.01)
         readings.sort()
-        print(readings[4])
+        print("sensor reading=",readings[4])
         return readings[4]
 
     def normalise_probs(self, x, y, theta, z):
