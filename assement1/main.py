@@ -53,7 +53,7 @@ BP.set_sensor_type(BP.PORT_1, BP.SENSOR_TYPE.NXT_ULTRASONIC)
 speed = 170  # range is -255 to 255, make lower if bot it too fast
 boost_speed = 100
 turn_speed = 230
-creep_speed = 210
+creep_speed = 220
 # Move Forward
 
 
@@ -75,15 +75,17 @@ def right():
 
 
 # Move backward
-def back():
-    BP.set_motor_power(motorR, speed)
-    BP.set_motor_power(motorL, -speed)
+def back(power: int = speed):
+    BP.set_motor_power(motorR, power)
+    BP.set_motor_power(motorL, -power)
 
 
 # Stop
 def stop():
     BP.set_motor_power(motorR, 0)
     BP.set_motor_power(motorL, 0)
+
+
 
 def read_sensor():
     try:
@@ -125,7 +127,7 @@ try:
 
         elif inp == "c":
             inp2 = "a"
-            fwd(creep_speed)
+            back(creep_speed)
             print("creep")
             while inp2 != "c":
                 print(read_sensor())
