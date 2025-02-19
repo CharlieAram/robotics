@@ -76,7 +76,9 @@ class NormRobot(Robot):
             if x is not None:
                 readings.append(x)
             sleep(0.01)
-        return sorted(readings)[4]
+        readings.sort()
+        print(readings[4])
+        return readings[4]
 
     def normalise_probs(self, x, y, theta, z):
         likelihoods = [
