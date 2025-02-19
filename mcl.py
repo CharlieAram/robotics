@@ -92,7 +92,7 @@ class NormRobot(Robot):
             probs.append(max(0.01, prob)) # Baseline 1% error rate
             dists.append(dist)
 
-        print(sum(dists) / len(dists))
+        print("average expected dist", sum(dists) / len(dists))
         total = sum(probs)
         likelihoods = [l / total for l in probs]
 
