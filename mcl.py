@@ -88,7 +88,7 @@ class NormRobot(Robot):
         probs, dists = [], []
 
         for p in self.particle_cloud:
-            prob,dist = calculate_likelihood(p.pos.x, p.pos.y, p.pos.theta, z)
+            dist, prob = calculate_likelihood(p.pos.x, p.pos.y, p.pos.theta, z)
             probs.append(max(0.01, prob)) # Baseline 1% error rate
             dists.append(dist)
 
