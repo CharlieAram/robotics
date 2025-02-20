@@ -82,14 +82,14 @@ def calculate_likelihood(x, y, theta, z):
 class NormRobot(Robot):
     def sensor_reading(self) -> float:
         readings = []
-        while len(readings) < 10:
+        while len(readings) < 20:
             x = self.driver.read_sensor()
             if x is not None:
                 readings.append(x)
             sleep(0.01)
         readings.sort()
-        print("sensor reading=", readings[4])
-        return readings[4]
+        print("sensor reading=", readings[10])
+        return readings[10]
 
     def normalise_probs(self, z):
         probs, dists = [], []
