@@ -149,7 +149,7 @@ if __name__ == "__main__":
             robot.navigateToWaypoint(a, b, 20)
             robot.calibration_spin()
             start = (a, b)
-            sleep(3)
+            sleep(1)
     else:
         robot = NormRobot(100, 0.02, VIS=False)
         robot.update()
