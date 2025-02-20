@@ -144,7 +144,7 @@ if __name__ == "__main__":
             draw_cross(*waypoint)
 
         start = waypoints[0]
-        for a, b in waypoints[2:]:
+        for a, b in waypoints[1:]:
             draw_line(start[0], start[1], a, b)
             robot.navigateToWaypoint(a, b, 10)
             start = (a, b)

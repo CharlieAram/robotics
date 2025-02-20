@@ -158,7 +158,7 @@ class Robot:
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
         print(f"target x: {x}, target y: {y}")
         r = math.sqrt((x - robot_x) ** 2 + (y - robot_y) ** 2)
-        theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
+        theta = -math.atan2(y - robot_y, x - robot_x) - robot_theta
         # Normalize theta to be within the range [-pi, pi]
         theta = (theta + math.pi) % (2 * math.pi) - math.pi
         return r, -theta
