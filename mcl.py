@@ -117,6 +117,10 @@ class NormRobot(Robot):
 
 
 print(min([(distance_to_wall(*(66, 41, -2.05), wall), wall) for wall in WALLS]))
+calculate_likelihood(
+    *(66, 41, -2.05),
+    42
+)
 exit()
 
 if __name__ == "__main__":
