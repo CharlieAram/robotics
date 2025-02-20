@@ -119,7 +119,7 @@ class NormRobot(Robot):
 
 if __name__ == "__main__":
     if VISUALISATION:
-        robot = NormRobot(100, start_x=84, start_y=30, start_theta=math.pi/2, VIS=True)
+        robot = NormRobot(100, start_x=84, start_y=30, start_theta=0, VIS=True)
 
         waypoints = [
             (84, 30),
