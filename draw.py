@@ -1,3 +1,5 @@
+import math
+
 def rescale(x, y):
     return (x * 3 + 10, 750 - (y * 3 + 10))
 
@@ -10,6 +12,8 @@ def draw_line(x0: float, y0: float, x1: float, y1: float):
 
 def draw_particles(particles: list[tuple[float, float, float]]):  # x,y,theta
     particles = [(*rescale(x, y), theta) for (x, y, theta) in particles]
+    for x, y, theta in particles:
+        print(f"drawLine: ({x}, {y}, {x+math.cos(theta)}, {y+math.sin(theta)})")
     print(f"drawParticles: {particles}")
 
 def draw_cross(x: float, y: float, size: int = 5):
