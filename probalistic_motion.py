@@ -153,6 +153,13 @@ class Robot:
         )
         return pos.x, pos.y, pos.theta
 
+    def calibration_spin(self):
+        old_theta = self.getMeanPos()[2]
+        self.rotate(-old_theta)
+        for i in range(3):
+            self.rotate(math.pi / 2)
+        self.rotate(math.pi / 2 + old_theta)
+
     def getTargeting(self, x: float, y: float):
         robot_x, robot_y, robot_theta = self.getMeanPos()
         print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")

@@ -147,6 +147,7 @@ if __name__ == "__main__":
         for a, b in waypoints[1:]:
             draw_line(start[0], start[1], a, b)
             robot.navigateToWaypoint(a, b, 10)
+            robot.calibration_spin()
             start = (a, b)
             sleep(3)
     else:
