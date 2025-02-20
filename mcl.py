@@ -31,7 +31,7 @@ WALLS = {
     "HO": [(210, 0), (0, 0)],
 }
 
-SD = 0.25  # Standard deviation of the sonar sensor
+SD = 0.5  # Standard deviation of the sonar sensor
 
 def angle_to_wall(theta):
     theta = abs(theta)
