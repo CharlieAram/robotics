@@ -57,7 +57,6 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
 
     return dist
 
-
 # x, y, theta: current position and orientation of the robot
 # z is the sonar measurement
 def calculate_likelihood(x, y, theta, z):
@@ -116,6 +115,9 @@ class NormRobot(Robot):
         self.normalise_probs(self.sensor_reading())
         super().update()
 
+
+print(min([(distance_to_wall(*(66, 41, -2.05), wall), wall) for wall in WALLS]))
+exit()
 
 if __name__ == "__main__":
     if VISUALISATION:
