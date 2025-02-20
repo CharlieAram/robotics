@@ -125,9 +125,9 @@ def motion(
 class Robot:
     def __init__(self, num_points: int, start_x: float = 0.0, start_y: float = 0.0, start_theta: float = 0.0, VIS=False):
         # Initialize the robot at the center of the world
-        self.e = 0.75 # Fwd dist uncertainty [measured]
+        self.e = 1.5 # Fwd dist uncertainty [measured]
         self.f = 1.5 * math.pi/180 # Fwd rot uncertainty
-        self.g = 2 * math.pi/180 # pure rotation uncertainty
+        self.g = 3 * math.pi/180 # pure rotation uncertainty
         self.VIS = VIS
         self.motorR = brickpi3.BrickPi3.PORT_B  # right motor
         self.motorL = brickpi3.BrickPi3.PORT_C  # left motor
