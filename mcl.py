@@ -51,9 +51,15 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
     if dist < 0:
         return float("inf")
 
-    # Check if the intersection point is within the wall
-    if (int_x - ax) * (int_x - bx) > 0 or (int_y - ay) * (int_y - by) > 0:
+    if ax == bx:
+        if int_y < min(ay, by) or int_y > max(ay, by):
+            return float("inf")
+    elif int_x < min(ax, bx) or int_x > max(ax, bx):
         return float("inf")
+
+    # Check if the intersection point is within the wall
+    # if (int_x - ax) * (int_x - bx) > 0 or (int_y - ay) * (int_y - by) > 0:
+        # return float("inf")
 
     return dist
 
