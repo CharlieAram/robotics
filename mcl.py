@@ -180,11 +180,6 @@ class NormRobot(Robot):
 
     @override
     def update(self):
-        x, y, theta = self.getMeanPos()
-        _, wall = min([(distance_to_wall(x, y, theta, wall), wall) for wall in WALLS])
-        if oblique_to_wall(x, y, theta, wall):
-            print("Oblique, recalibrating")
-            self.calibration_spin()
         self.normalise_probs(self.sensor_reading())
         super().update()
 
