@@ -161,7 +161,7 @@ class Robot:
         theta = math.atan2(y - robot_y, x - robot_x) - robot_theta
         # Normalize theta to be within the range [-pi, pi]
         theta = (theta + math.pi) % (2 * math.pi) - math.pi
-        return r, theta
+        return r, -theta
 
     def navigateToWaypoint(self, x, y, i=10):
         r, theta = self.getTargeting(x, y)
