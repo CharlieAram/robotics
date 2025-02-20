@@ -41,6 +41,7 @@ SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 1
 
 VERBOSE = False
 
+OFS = 1
 
 @dataclass
 class Position:
@@ -172,15 +173,15 @@ class Robot:
         if abs(theta) > 10 * 3.14159/180:
             print(f"WARNING: {theta} angle error!")
         if r > i:
-            self.move_forward(i)
+            self.move_forward(i - OFS)
             sleep(0.5)
             self.navigateToWaypoint(x, y)
             return
 
-        self.move_forward(r)
+        self.move_forward(r - OFS)
         sleep(0.5)
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
-        print(f"robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
+        print(f"TARGET REACHED, robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
 
     # Call when we move the robot forward
     @motion
