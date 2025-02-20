@@ -104,6 +104,7 @@ class NormRobot(Robot):
                 k=len(self.particle_cloud.particles),
             )
         ]
+        assert abs(sum(p.weight for p in self.particle_cloud.particles) - 1) < 0.001, "probs should sum to 1"
 
     @override
     def update(self):
