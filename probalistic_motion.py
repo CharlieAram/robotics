@@ -6,7 +6,7 @@ from random import gauss
 from time import sleep
 import os
 import sys
-from draw import draw_line, draw_particles
+from draw import draw_line, draw_particles, draw_particle_with_dir
 
 VISUALISATION = not bool(len(sys.argv) > 1)
 
@@ -217,7 +217,7 @@ class Robot:
             draw_particles(
                 [(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud]
             )
-
+            draw_particle_with_dir(*self.getMeanPos())
 
 if __name__ == "__main__":
     if VISUALISATION:
