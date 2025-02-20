@@ -175,7 +175,7 @@ class Robot:
         if r > i:
             self.move_forward(i - OFS)
             sleep(0.5)
-            self.navigateToWaypoint(x, y)
+            self.navigateToWaypoint(x, y, i)
             return
 
         self.move_forward(r - OFS)
