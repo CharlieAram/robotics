@@ -33,6 +33,13 @@ WALLS = {
 
 SD = 0.025  # Standard deviation of the sonar sensor
 
+def angle_to_wall(theta):
+    theta = abs(theta)
+    if theta < math.pi/2:
+        delta = theta
+    else:
+        delta = math.pi - theta
+    return delta
 
 def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
     # Get the start and end points of the wall
@@ -51,11 +58,23 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
     if dist < 0:
         return float("inf")
 
+
     if ax == bx:
         if int_y < min(ay, by) or int_y > max(ay, by):
             return float("inf")
-    elif int_x < min(ax, bx) or int_x > max(ax, bx):
-        return float("inf")
+        
+        # A vertical wall angle is just the same as rotating 90 and looking at a horizontal wall
+        if angle_to_wall(theta - math.pi / 4) < math.pi / 4:
+            return 255
+
+    else:
+        if int_x < min(ax, bx) or int_x > max(ax, bx):
+            return float("inf")
+
+        # Horizontal wall
+        # At very shallow angles, we want to
+        if angle_to_wall(theta) < math.pi / 4:
+            return 255
 
     # Check if the intersection point is within the wall
     # if (int_x - ax) * (int_x - bx) > 0 or (int_y - ay) * (int_y - by) > 0:
