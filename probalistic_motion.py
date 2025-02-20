@@ -163,10 +163,9 @@ class Robot:
         theta = (theta + math.pi) % (2 * math.pi) - math.pi
         return r, theta
 
-    def navigateToWaypoint(self, x, y, i=20, fst=False):
+    def navigateToWaypoint(self, x, y, i=20):
         r, theta = self.getTargeting(x, y)
         print(f"{r=}, {theta=}")
-        if fst: theta *= -1
         self.rotate(theta)
 
         # Assume that we are at the right angle now
@@ -235,6 +234,6 @@ if __name__ == "__main__":
             try:
                 x = float(input("Enter x coordinate: "))
                 y = float(input("Enter y coordinate: "))
-                robot.navigateToWaypoint(x, y, 10, fst=True)
+                robot.navigateToWaypoint(x, y)
             except ValueError:
                 print("Please enter valid numbers for coordinates")
