@@ -146,7 +146,7 @@ if __name__ == "__main__":
         start = waypoints[0]
         for a, b in waypoints[1:]:
             draw_line(start[0], start[1], a, b)
-            robot.navigateToWaypoint(a, b, 10)
+            robot.navigateToWaypoint(a, b, 20)
             robot.calibration_spin()
             start = (a, b)
             sleep(3)
@@ -158,6 +158,6 @@ if __name__ == "__main__":
             try:
                 x = float(input("Enter x coordinate: "))
                 y = float(input("Enter y coordinate: "))
-                robot.navigateToWaypoint(x, y, 10)
+                robot.navigateToWaypoint(x, y, 20)
             except ValueError:
                 print("Please enter valid numbers for coordinates")
