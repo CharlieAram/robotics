@@ -51,6 +51,7 @@ class Position:
     def move_forward(self, D: float):
         self.x += math.cos(self.theta) * D
         self.y -= math.sin(self.theta) * D # Unflip axis
+        assert abs(self.x) < 400 and abs(self.y) < 400, f"{self.x=}, {self.y=}"
 
     def rotate(self, angle: float):
         self.theta += angle
