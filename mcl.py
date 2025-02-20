@@ -80,6 +80,10 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
     # if (int_x - ax) * (int_x - bx) > 0 or (int_y - ay) * (int_y - by) > 0:
         # return float("inf")
 
+    # uncertain angle
+    if dist > 185:
+        return 255
+
     return dist
 
 # x, y, theta: current position and orientation of the robot
