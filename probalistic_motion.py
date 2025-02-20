@@ -41,7 +41,7 @@ SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 1
 
 VERBOSE = False
 
-OFS = 1
+OFS = 1.5
 
 @dataclass
 class Position:
@@ -163,7 +163,7 @@ class Robot:
         theta = (theta + math.pi) % (2 * math.pi) - math.pi
         return r, theta
 
-    def navigateToWaypoint(self, x, y, i=10, fst=False):
+    def navigateToWaypoint(self, x, y, i=20, fst=False):
         r, theta = self.getTargeting(x, y)
         print(f"{r=}, {theta=}")
         if fst: theta *= -1
