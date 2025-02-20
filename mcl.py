@@ -96,13 +96,16 @@ class NormRobot(Robot):
         total = sum(probs)
         likelihoods = [l / total for l in probs]
 
+        p_probs = choices(
+            list(zip(self.particle_cloud.particles, likelihoods)),
+            likelihoods,
+            k=len(self.particle_cloud.particles),
+        )
+        total = sum(prob for (_,prob) in p_probs)
+
         self.particle_cloud.particles = [
-            p.clone_with_weight(prob)
-            for p, prob in choices(
-                list(zip(self.particle_cloud.particles, likelihoods)),
-                likelihoods,
-                k=len(self.particle_cloud.particles),
-            )
+            p.clone_with_weight(prob / total)
+            for p, prob in p_probs
         ]
         total_p = sum(p.weight for p in self.particle_cloud.particles)
         assert abs(total_p - 1) < 0.001, f"probs should sum to 1, not {total_p}"
