@@ -116,13 +116,6 @@ class NormRobot(Robot):
         super().update()
 
 
-print(min([(distance_to_wall(*(66, 41, -2.05), wall), wall) for wall in WALLS]))
-calculate_likelihood(
-    *(66, 41, -2.05),
-    42
-)
-exit()
-
 if __name__ == "__main__":
     if VISUALISATION:
         robot = NormRobot(100, start_x=84, start_y=30, start_theta=0, VIS=True)
