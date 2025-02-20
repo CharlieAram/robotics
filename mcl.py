@@ -69,6 +69,8 @@ def calculate_likelihood(x, y, theta, z):
     # )
 
     # TODO: Need to add reasonable constant
+    if dist > 1e9:
+        print("OUTSIDE: ", x, y, theta, z)
     return dist, math.exp(-((z - dist) ** 2) / (2 * SD**2))
 
 
@@ -90,7 +92,7 @@ class NormRobot(Robot):
         for p in self.particle_cloud:
             dist, prob = calculate_likelihood(p.pos.x, p.pos.y, p.pos.theta, z)
             dists.append(dist)
-            probs.append(prob + 0.01) # Baseline 1% error rate
+            probs.append(prob + 0.01)  # Baseline 1% error rate
 
         print("average expected dist", sum(dists) / len(dists))
         total = sum(probs)
@@ -101,11 +103,10 @@ class NormRobot(Robot):
             likelihoods,
             k=len(self.particle_cloud.particles),
         )
-        total = sum(prob for (_,prob) in p_probs)
+        total = sum(prob for (_, prob) in p_probs)
 
         self.particle_cloud.particles = [
-            p.clone_with_weight(prob / total)
-            for p, prob in p_probs
+            p.clone_with_weight(prob / total) for p, prob in p_probs
         ]
         total_p = sum(p.weight for p in self.particle_cloud.particles)
         assert abs(total_p - 1) < 0.001, f"probs should sum to 1, not {total_p}"
