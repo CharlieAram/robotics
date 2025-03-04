@@ -10,10 +10,10 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 # Homography for camera: CHANGE THESE NUMBERS: enter your own correspondences
 # to calibrate the ground plane homography for your robot
-(x1, y1, u1, v1) = (80, 20, 152, 65)
-(x2, y2, u2, v2) = (80, -20, 530, 76)
-(x3, y3, u3, v3) = (20, 10, 122, 336)
-(x4, y4, u4, v4) = (20, -10, 550, 346)
+(x1, y1, u1, v1) = (20, -10, 75, 434)
+(x2, y2, u2, v2) = (20, 6, 487, 440)
+(x3, y3, u3, v3) = (54, -16, 162, 170)
+(x4, y4, u4, v4) = (50, 18, 533, 187)
 
 # Form and solve linear system
 A = np.array(

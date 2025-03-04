@@ -31,8 +31,7 @@ WALLS = {
     "HO": [(210, 0), (0, 0)],
 }
 
-SD = 0.25  # Standard deviation of the sonar sensor
-
+SD = 0.75  # Standard deviation of the sonar sensor
 
 def angle_to_wall(theta):
     theta = abs(theta)
@@ -87,6 +86,44 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
 
     return dist
 
+def oblique_to_wall(x: float, y: float, theta: float, wall: str) -> float:
+    # Get the start and end points of the wall
+    (ax, ay), (bx, by) = WALLS[wall]
+
+    c, s = math.cos(theta), math.sin(theta)
+
+    dist = ((by - ay) * (ax - x) - (bx - ax) * (ay - y)) / (
+        (by - ay) * c - (bx - ax) * s
+    )
+
+    int_x = x + dist * c
+    int_y = y + dist * s
+
+    # The wall is behind you, you should not be able to sense it
+    assert dist >= 0, "Should not have negative dist in oblique targeting"
+
+
+    if ax == bx:
+        assert min(ay, by) <= int_y <= max(ay, by), "Should be pointing at wall in oblique targeting"
+        
+        # A vertical wall angle is just the same as rotating 90 and looking at a horizontal wall
+        if angle_to_wall(theta - math.pi / 4) < math.pi / 4:
+            return True
+
+    else:
+        assert min(ax, bx) <= int_x <= max(ax, bx), "Should be pointing at wall in oblique targeting"
+
+        # Horizontal wall
+        # At very shallow angles, we want to
+        if angle_to_wall(theta) < math.pi / 4:
+            return True
+
+    # Check if the intersection point is within the wall
+    # if (int_x - ax) * (int_x - bx) > 0 or (int_y - ay) * (int_y - by) > 0:
+        # return float("inf")
+
+    # uncertain angle
+    return False
 
 # x, y, theta: current position and orientation of the robot
 # z is the sonar measurement
@@ -173,7 +210,7 @@ if __name__ == "__main__":
             draw_line(start[0], start[1], a, b)
             robot.navigateToWaypoint(a, b, 20)
             robot.navigateToWaypoint(a, b, 20)
-            robot.calibration_spin()
+            # robot.calibration_spin()
             start = (a, b)
             sleep(1)
     else:

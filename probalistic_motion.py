@@ -133,9 +133,9 @@ class Robot:
         VIS=False,
     ):
         # Initialize the robot at the center of the world
-        self.e = 0.75  # Fwd dist uncertainty [measured]
-        self.f = 1.5 * math.pi / 180  # Fwd rot uncertainty
-        self.g = 2 * math.pi / 180  # pure rotation uncertainty
+        self.e = 3 # Fwd dist uncertainty [measured]
+        self.f = 3 * math.pi/180 # Fwd rot uncertainty
+        self.g = 5 * math.pi/180 # pure rotation uncertainty
         self.VIS = VIS
         self.motorR = brickpi3.BrickPi3.PORT_B  # right motor
         self.motorL = brickpi3.BrickPi3.PORT_C  # left motor

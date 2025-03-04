@@ -11,3 +11,4 @@ __pycache__
 .python-version
 pyproject.toml
 uv.lock
+demo.jpg
