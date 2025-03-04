@@ -145,7 +145,8 @@ if __name__ == "__main__":
                 # Draw a little circle to show each detected blob
                 img = cv2.circle(img, (cuint, cvint), 5, white, 3)
                 # Also print its coordinates on the image!
-                pstring = "(" + str(cuint) + "," + str(cvint) + ")"
+                world_x, world_y = HtransformUVtoXY(HInv, cuint, cvint)
+                pstring = f"({world_x},{world_y})"
                 img = cv2.putText(
                     img, pstring, (cuint + 8, cvint), font, 0.5, white, 1, cv2.LINE_AA
                 )
