@@ -146,7 +146,7 @@ if __name__ == "__main__":
                 img = cv2.circle(img, (cuint, cvint), 5, white, 3)
                 # Also print its coordinates on the image!
                 world_x, world_y = HtransformUVtoXY(HInv, cuint, cvint)
-                pstring = f"({world_x},{world_y})"
+                pstring = f"({world_x:.2f},{world_y:.2f})"
                 img = cv2.putText(
                     img, pstring, (cuint + 8, cvint), font, 0.5, white, 1, cv2.LINE_AA
                 )

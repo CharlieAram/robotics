@@ -50,7 +50,7 @@ class Columbussy(Robot):
         if avoid:
             print("Avoiding obstacle at", avoid)
             x, y = avoid
-
+            
             if x > 0:
                 self.rotate(-1)
             else:
