@@ -96,3 +96,49 @@ class MotorDriver:
             self.flipL = not self.flipL
             self.move_forward(angle)
             self.flipL = not self.flipL
+
+    def gradual_rotate(self, right: bool, dist: float = 10):
+
+        """
+        Move the robot forward by a distance dist (in rotations)
+        """
+        diff_factor = 1.5
+        speed = 50
+
+        self.BP.offset_motor_encoder(
+            self.motorL, self.BP.get_motor_encoder(self.motorL)
+        )
+        self.BP.offset_motor_encoder(
+            self.motorR, self.BP.get_motor_encoder(self.motorR)
+        )
+
+        if right:
+            targetL = 360 * dist * diff_factor
+            targetR = 360 * dist
+            self.write_left(speed * self.SCALE * diff_factor)
+            self.write_right(speed * self.SCALE)
+        else:
+            targetL = 360 * dist
+            targetR = 360 * dist * diff_factor
+            self.write_left(speed * self.SCALE)
+            self.write_right(speed * self.SCALE * diff_factor)
+
+        l, r = self.read()
+        t = time.time()
+        while l < targetL or r < targetR:
+            if l < targetL and r < targetR and time.time() - t > 0.4:
+                ratio = (l - r) / 10
+                print(ratio)
+                self.write_left((speed - ratio) * self.SCALE)
+                self.write_right((speed + ratio) * self.SCALE)
+                t = time.time()
+
+            l, r = self.read()
+            if l >= targetL:
+                self.write_left(0)
+            if r >= targetR:
+                self.write_right(0)
+
+    def lane_change(self):
+        self.gradual_rotate(True)
+        self.gradual_rotate(False)
