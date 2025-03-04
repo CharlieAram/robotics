@@ -42,18 +42,20 @@ class Columbussy(Robot):
         if not obs:
             return None
         return min(obs, key=lambda x: (x[0] ** 2 + x[1] ** 2) ** 0.5)
-    
+
     @motion
     def navigate(self):
         avoid = self.get_closest_obstacle()
         if avoid:
+            print("Avoiding obstacle at", avoid)
             x, y = avoid
-            
+
             if x > 0:
-                self.rotate(-0.1)
+                self.rotate(-1)
             else:
-                self.rotate(0.1)
-        self.move_forward(0.1)
+                self.rotate(1)
+        self.move_forward(5)
+
 
 if __name__ == "__main__":
     robot = Columbussy(0, 0, 0)
