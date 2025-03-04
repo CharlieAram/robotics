@@ -91,6 +91,8 @@ if __name__ == "__main__":
     picam2.configure(preview_config)
 
     picam2.start()
+    import atexit
+    atexit.register(picam2.stop)
 
     starttime = time.time()
     for i in range(1000):
@@ -158,5 +160,3 @@ if __name__ == "__main__":
         cv2.imwrite("demo.jpg", img)
         print("drawImg:" + "/home/pi/prac-files/demo.jpg")
         print("Captured image", i, "at time", time.time() - starttime)
-
-    picam2.stop()

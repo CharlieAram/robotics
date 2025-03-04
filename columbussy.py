@@ -7,6 +7,8 @@ class Columbussy(Robot):
         super().__init__(x, y, theta)
         self.picam2 = Picamera2()
         self.picam2.start()
+        import atexit
+        atexit.register(self.picam2.stop)
 
     def get_obstacles(self):
         img = self.picam2.capture_array()
@@ -50,7 +52,7 @@ class Columbussy(Robot):
         if avoid:
             print("Avoiding obstacle at", avoid)
             x, y = avoid
-            
+
             if x > 0:
                 self.rotate(-1)
             else:
