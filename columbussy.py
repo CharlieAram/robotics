@@ -63,11 +63,10 @@ class Columbussy(Robot):
         if avoid:
             print("Avoiding obstacle at", avoid)
             x, y = avoid
-            if self.left_lim < x < self.right_lim:
-                if x > 0:
-                    self.rotate(-1)
-                else:
-                    self.rotate(1)
+            if x > 0:
+                self.rotate(-1)
+            else:
+                self.rotate(1)
         self.move_forward(5)
 
 
