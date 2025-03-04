@@ -45,15 +45,21 @@ class Columbussy(Robot):
             if area > 150:
                 yield HtransformUVtoXY(HInv, cu, cv)
 
-    def get_closest_obstacle(self):
-        obs = list(self.get_obstacles())
+    def get_dangerous_obstacles(self):
+        for obs in self.get_obstacles():
+            x, y = obs
+            if self.left_lim < x < self.right_lim:
+                yield obs
+
+    def identify_closest_threat(self):
+        obs = list(self.get_dangerous_obstacles())
         if not obs:
             return None
         return min(obs, key=lambda x: (x[0] ** 2 + x[1] ** 2) ** 0.5)
 
     @motion
     def navigate(self):
-        avoid = self.get_closest_obstacle()
+        avoid = self.identify_closest_threat()
         if avoid:
             print("Avoiding obstacle at", avoid)
             x, y = avoid
