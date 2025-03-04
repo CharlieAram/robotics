@@ -86,12 +86,14 @@ def stop():
     BP.set_motor_power(motorL, 0)
 
 
-
 def read_sensor():
     try:
-        return (BP.get_sensor(BP.PORT_1)+ 10) #10 is offset to account for the fact that the sensor is not at the center of the robot. idek chief if 10 is accurate
+        return (
+            BP.get_sensor(BP.PORT_1) + 10
+        )  # 10 is offset to account for the fact that the sensor is not at the center of the robot. idek chief if 10 is accurate
     except brickpi3.SensorError:
-        return 999 
+        return 999
+
 
 # def boost():
 #         BP.set_motor_power(motorR, -boost_speed)

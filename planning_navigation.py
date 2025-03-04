@@ -3,6 +3,8 @@
 # Andrew Davison 2017
 import os, math, time, random
 
+from probalistic_motion import Robot
+
 
 # Constants and variables
 # Units here are in metres and radians using our standard coordinate frame
@@ -143,3 +145,5 @@ def calculateClosestObstacleDistance(x, y):
             if dist < closestdist:
                 closestdist = dist
     return closestdist
+
+

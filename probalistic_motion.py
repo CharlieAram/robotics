@@ -43,6 +43,7 @@ VERBOSE = False
 
 OFS = 1.5
 
+
 @dataclass
 class Position:
     x: float
@@ -51,7 +52,7 @@ class Position:
 
     def move_forward(self, D: float):
         self.x += math.cos(self.theta) * D
-        self.y -= math.sin(self.theta) * D # Unflip axis
+        self.y -= math.sin(self.theta) * D  # Unflip axis
         assert abs(self.x) < 400 and abs(self.y) < 400, f"{self.x=}, {self.y=}"
 
     def rotate(self, angle: float):
@@ -123,11 +124,18 @@ def motion(
 
 
 class Robot:
-    def __init__(self, num_points: int, start_x: float = 0.0, start_y: float = 0.0, start_theta: float = 0.0, VIS=False):
+    def __init__(
+        self,
+        num_points: int,
+        start_x: float = 0.0,
+        start_y: float = 0.0,
+        start_theta: float = 0.0,
+        VIS=False,
+    ):
         # Initialize the robot at the center of the world
-        self.e = 0.75 # Fwd dist uncertainty [measured]
-        self.f = 1.5 * math.pi/180 # Fwd rot uncertainty
-        self.g = 2 * math.pi/180 # pure rotation uncertainty
+        self.e = 0.75  # Fwd dist uncertainty [measured]
+        self.f = 1.5 * math.pi / 180  # Fwd rot uncertainty
+        self.g = 2 * math.pi / 180  # pure rotation uncertainty
         self.VIS = VIS
         self.motorR = brickpi3.BrickPi3.PORT_B  # right motor
         self.motorL = brickpi3.BrickPi3.PORT_C  # left motor
@@ -138,7 +146,9 @@ class Robot:
         self.driver.flipR = True
         self.particle_cloud = ParticleCloud(
             [
-                WeightedPosition(pos=Position(start_x, start_y, start_theta), weight=1.0 / num_points)
+                WeightedPosition(
+                    pos=Position(start_x, start_y, start_theta), weight=1.0 / num_points
+                )
                 for _ in range(num_points)
             ]
         )
@@ -177,7 +187,7 @@ class Robot:
 
         # Assume that we are at the right angle now
         r, theta = self.getTargeting(x, y)
-        if abs(theta) > 10 * 3.14159/180:
+        if abs(theta) > 10 * 3.14159 / 180:
             print(f"WARNING: {theta} angle error!")
         if r > i:
             self.move_forward(i - OFS)
@@ -188,7 +198,9 @@ class Robot:
         self.move_forward(r - OFS)
         sleep(0.5)
         (robot_x, robot_y, robot_theta) = self.getMeanPos()
-        print(f"TARGET REACHED, robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}")
+        print(
+            f"TARGET REACHED, robot_x: {robot_x}, robot_y: {robot_y}, robot_theta: {robot_theta}"
+        )
 
     # Call when we move the robot forward
     @motion
@@ -218,6 +230,7 @@ class Robot:
                 [(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud]
             )
             draw_particle_with_dir(*self.getMeanPos())
+
 
 if __name__ == "__main__":
     if VISUALISATION:

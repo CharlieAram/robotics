@@ -7,3 +7,7 @@ env/
 
 __pycache__
 *.pyc
+
+.python-version
+pyproject.toml
+uv.lock

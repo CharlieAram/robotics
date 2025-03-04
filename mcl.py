@@ -33,13 +33,15 @@ WALLS = {
 
 SD = 0.25  # Standard deviation of the sonar sensor
 
+
 def angle_to_wall(theta):
     theta = abs(theta)
-    if theta < math.pi/2:
+    if theta < math.pi / 2:
         delta = theta
     else:
         delta = math.pi - theta
     return delta
+
 
 def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
     # Get the start and end points of the wall
@@ -58,11 +60,10 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
     if dist < 0:
         return float("inf")
 
-
     if ax == bx:
         if int_y < min(ay, by) or int_y > max(ay, by):
             return float("inf")
-        
+
         # A vertical wall angle is just the same as rotating 90 and looking at a horizontal wall
         if angle_to_wall(theta - math.pi / 4) < math.pi / 4:
             return 255
@@ -78,13 +79,14 @@ def distance_to_wall(x: float, y: float, theta: float, wall: str) -> float:
 
     # Check if the intersection point is within the wall
     # if (int_x - ax) * (int_x - bx) > 0 or (int_y - ay) * (int_y - by) > 0:
-        # return float("inf")
+    # return float("inf")
 
     # uncertain angle
     if dist > 185:
         return 255
 
     return dist
+
 
 # x, y, theta: current position and orientation of the robot
 # z is the sonar measurement
