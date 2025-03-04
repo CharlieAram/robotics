@@ -6,6 +6,7 @@ class Columbussy(Robot):
     def __init__(self, x: float, y: float, theta: float):
         super().__init__(x, y, theta)
         self.picam2 = Picamera2()
+        self.picam2.start()
 
     def get_obstacles(self):
         img = self.picam2.capture_array()
