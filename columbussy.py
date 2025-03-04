@@ -3,11 +3,16 @@ from calibrate_camera import HInv, HtransformUVtoXY, cv2, np, Picamera2
 
 
 class Columbussy(Robot):
-    def __init__(self, x: float, y: float, theta: float):
+    def __init__(
+        self, x: float, y: float, theta: float, left_lim: float, right_lim: float
+    ):
         super().__init__(x, y, theta)
+        self.left_lim = left_lim
+        self.right_lim = right_lim
         self.picam2 = Picamera2()
         self.picam2.start()
         import atexit
+
         atexit.register(self.picam2.stop)
 
     def get_obstacles(self):
@@ -52,16 +57,16 @@ class Columbussy(Robot):
         if avoid:
             print("Avoiding obstacle at", avoid)
             x, y = avoid
-
-            if x > 0:
-                self.rotate(-1)
-            else:
-                self.rotate(1)
+            if self.left_lim < x < self.right_lim:
+                if x > 0:
+                    self.rotate(-1)
+                else:
+                    self.rotate(1)
         self.move_forward(5)
 
 
 if __name__ == "__main__":
-    robot = Columbussy(0, 0, 0)
+    robot = Columbussy(0, 0, 0, -7.63, 6.54)
     while True:
         print("nav")
         robot.navigate()
