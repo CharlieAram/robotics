@@ -13,8 +13,10 @@ if __name__ == "__main__":
     driver = motor_driver.MotorDriver(motorL=motorL, motorR=motorR)
     driver.flipR = True
     print(POWER)
-    driver.write_left(POWER)
-    driver.write_right(POWER)
+    while True:
+        driver.write_left(POWER)
+        driver.write_right(POWER)
+        time.sleep(0.2)
     # for i in range(0, 255):
     #     print(i)
     #     driver.write_left(i)
