@@ -4,17 +4,6 @@ import cv2
 import numpy as np
 from picamera2 import Picamera2
 
-BP = brickpi3.BrickPi3()
-
-
-picam2 = Picamera2()
-preview_config = picam2.create_preview_configuration(main={"size": (640, 480)})
-picam2.configure(preview_config)
-
-picam2.start()
-
-starttime = time.time()
-
 white = (255, 255, 255)
 font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -94,16 +83,56 @@ def drawGridOnImage(im):
     return im
 
 
-for i in range(1000):
-    img = picam2.capture_array()
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+if __name__ == "__main__":
+    BP = brickpi3.BrickPi3()
 
-    # Draw grid on image
-    img = drawGridOnImage(img)
+    picam2 = Picamera2()
+    preview_config = picam2.create_preview_configuration(main={"size": (640, 480)})
+    picam2.configure(preview_config)
 
-    # Display image on interface
-    cv2.imwrite("demo.jpg", img)
-    print("drawImg:" + "/home/pi/prac-files/demo.jpg")
-    print("Captured image", i, "at time", time.time() - starttime)
+    picam2.start()
 
-picam2.stop()
+    starttime = time.time()
+    for i in range(1000):
+        img = picam2.capture_array()
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+        # Convert image to HSV color space
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+        # Define range for red color in HSV
+        lower_red = np.array([0, 120, 70])
+        upper_red = np.array([10, 255, 255])
+        mask1 = cv2.inRange(hsv, lower_red, upper_red)
+
+        lower_red = np.array([170, 120, 70])
+        upper_red = np.array([180, 255, 255])
+        mask2 = cv2.inRange(hsv, lower_red, upper_red)
+
+        # Combine masks
+        mask = mask1 + mask2
+
+        # Find contours
+        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        # Draw circles around detected red objects
+        for contour in contours:
+            approx = cv2.approxPolyDP(
+                contour, 0.02 * cv2.arcLength(contour, True), True
+            )
+            area = cv2.contourArea(contour)
+            if len(approx) > 8 and area > 30:
+                (x, y), radius = cv2.minEnclosingCircle(contour)
+                center = (int(x), int(y))
+                radius = int(radius)
+                img = cv2.circle(img, center, radius, (0, 255, 0), 2)
+
+        # Draw grid on image
+        img = drawGridOnImage(img)
+
+        # Display image on interface
+        cv2.imwrite("demo.jpg", img)
+        print("drawImg:" + "/home/pi/prac-files/demo.jpg")
+        print("Captured image", i, "at time", time.time() - starttime)
+
+    picam2.stop()
