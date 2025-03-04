@@ -51,7 +51,7 @@ motorR = BP.PORT_B  # right motor
 motorL = BP.PORT_C  # left motor
 BP.set_sensor_type(BP.PORT_1, BP.SENSOR_TYPE.NXT_ULTRASONIC)
 speed = 170  # range is -255 to 255, make lower if bot it too fast
-boost_speed = 100
+boost_speed = 10
 turn_speed = 230
 creep_speed = 220
 # Move Forward
