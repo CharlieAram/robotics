@@ -75,6 +75,6 @@ class Columbussy(Robot):
 
 
 if __name__ == "__main__":
-    robot = Columbussy(0, 0, 0, -7.63, 6.54)
+    robot = Columbussy(0, 0, 0, -6.8, 11.9)
     while True:
         robot.navigate()
