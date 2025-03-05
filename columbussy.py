@@ -4,11 +4,12 @@ from calibrate_camera import HInv, HtransformUVtoXY, cv2, np, Picamera2
 
 class Columbussy(Robot):
     def __init__(
-        self, x: float, y: float, theta: float, left_lim: float, right_lim: float
+        self, x: float, y: float, theta: float, left_lim: float, right_lim: float, fwd_lim: float
     ):
         super().__init__(x, y, theta)
         self.left_lim = left_lim
         self.right_lim = right_lim
+        self.fwd_lim = fwd_lim
         self.picam2 = Picamera2()
         self.picam2.start()
         import atexit
@@ -50,7 +51,7 @@ class Columbussy(Robot):
             obs = obs[::-1] # flipped :/
             x, y = obs
             print(f"smth here at {x:.2f}, {y:.2f}")
-            if self.left_lim < x < self.right_lim:
+            if self.left_lim < x < self.right_lim and y < self.fwd_lim:
                 yield obs
 
     def identify_closest_threat(self):
@@ -72,10 +73,10 @@ class Columbussy(Robot):
                 print("right")
                 self.rotate(0.1)
         else:
-            self.move_forward(25)
+            self.move_forward(5)
 
 
 if __name__ == "__main__":
-    robot = Columbussy(0, 0, 0, -6.8, 11.9)
+    robot = Columbussy(0, 0, 0, -6.8, 11.9, 40)
     while True:
         robot.navigate()
