@@ -48,6 +48,7 @@ class Columbussy(Robot):
     def get_dangerous_obstacles(self):
         for obs in self.get_obstacles():
             x, y = obs
+            print(f"smth here at {x:.2f}, {y:.2f}")
             if self.left_lim < x < self.right_lim:
                 yield obs
 
