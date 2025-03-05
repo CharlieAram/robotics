@@ -64,14 +64,15 @@ class Columbussy(Robot):
             print("Avoiding obstacle at", avoid)
             x, y = avoid
             if x > 0:
-                self.rotate(-1)
+                print("left")
+                # self.rotate(-1)
             else:
-                self.rotate(1)
-        self.move_forward(5)
+                print("right")
+                # self.rotate(1)
+        # self.move_forward(5)
 
 
 if __name__ == "__main__":
     robot = Columbussy(0, 0, 0, -7.63, 6.54)
     while True:
-        print("nav")
         robot.navigate()
