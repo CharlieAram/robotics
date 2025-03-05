@@ -67,11 +67,11 @@ class Columbussy(Robot):
             x, y = avoid
             if x > 0:
                 print("left")
-                # self.rotate(-1)
+                self.rotate(-1)
             else:
                 print("right")
-                # self.rotate(1)
-        # self.move_forward(5)
+                self.rotate(1)
+        self.move_forward(5)
 
 
 if __name__ == "__main__":
