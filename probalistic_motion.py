@@ -224,7 +224,6 @@ class Robot:
         print("rot mean pos", self.getMeanPos())
 
     def update(self):
-        print("updating")
         if self.VIS:
             draw_particles(
                 [(p.pos.x, p.pos.y, p.pos.theta) for p in self.particle_cloud]
