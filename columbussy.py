@@ -72,7 +72,7 @@ class Columbussy(Robot):
                 print("right")
                 self.rotate(0.1)
         else:
-            self.move_forward(5)
+            self.move_forward(50)
 
 
 if __name__ == "__main__":
