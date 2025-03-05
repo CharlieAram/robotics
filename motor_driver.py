@@ -4,7 +4,7 @@ import brickpi3
 
 import sys
 
-SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 2
+SCALE = eval(" ".join(sys.argv[1:])) if len(sys.argv) > 1 else 10
 
 
 class MotorDriver:
