@@ -67,6 +67,14 @@ def left():
     BP.set_motor_power(motorR, -turn_speed)
     BP.set_motor_power(motorL, -turn_speed)
 
+def drift_left(power):
+    BP.set_motor_power(motorR, -power)
+    BP.set_motor_power(motorL, power - 50)
+
+def drift_right(power):
+    BP.set_motor_power(motorR, -power + 50)
+    BP.set_motor_power(motorL, power)
+
 
 # Move Right
 def right():
@@ -137,6 +145,11 @@ try:
                 print(str(distance) + "\r")
                 time.sleep(0.01)
             stop()
+        
+        elif inp == "q":
+            drift_left(speed)
+        elif inp == "e":
+            drift_right(speed)
         time.sleep(0.01)  # sleep for 10 ms
 except KeyboardInterrupt:
     BP.reset_all()

@@ -1,3 +1,4 @@
+from math import pi
 from probalistic_motion import Robot, motion
 from calibrate_camera import HInv, HtransformUVtoXY, cv2, np, Picamera2
 
@@ -74,6 +75,10 @@ class Columbussy(Robot):
                 self.rotate(0.1)
         else:
             self.move_forward(5)
+            # (_, _, theta) = self.getMeanPos()
+            # if abs(theta) > pi/3:
+            #     print("Fixing")
+            #     self.rotate(-theta)
 
 
 if __name__ == "__main__":
