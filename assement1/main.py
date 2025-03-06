@@ -69,10 +69,10 @@ def left():
 
 def drift_left(power):
     BP.set_motor_power(motorR, -power)
-    BP.set_motor_power(motorL, power - 50)
+    BP.set_motor_power(motorL, power - 10)
 
 def drift_right(power):
-    BP.set_motor_power(motorR, -power + 50)
+    BP.set_motor_power(motorR, -power + 10)
     BP.set_motor_power(motorL, power)
 
 
