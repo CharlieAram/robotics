@@ -69,12 +69,12 @@ class Columbussy(Robot):
             x, y = avoid
             if x > 0:
                 print("left")
-                self.rotate(-0.1)
+                self.rotate(-0.09)
             else:
                 print("right")
-                self.rotate(0.1)
+                self.rotate(0.09)
         else:
-            self.move_forward(5)
+            self.move_forward(15)
             # (_, _, theta) = self.getMeanPos()
             # if abs(theta) > pi/3:
             #     print("Fixing")

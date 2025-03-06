@@ -74,8 +74,8 @@ class MotorDriver:
             if l < targetL and r < targetR and time.time() - t > 0.4:
                 ratio = (l - r) / 10
                 print(ratio)
-                self.write_left((20 - ratio) * self.SCALE)
-                self.write_right((20 + ratio) * self.SCALE)
+                self.write_left(min(100, (20 - ratio) * self.SCALE))
+                self.write_right(min(100, (20 + ratio) * self.SCALE))
                 t = time.time()
 
             l, r = self.read()

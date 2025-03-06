@@ -139,7 +139,7 @@ class Robot:
         self.VIS = VIS
         self.motorR = brickpi3.BrickPi3.PORT_B  # right motor
         self.motorL = brickpi3.BrickPi3.PORT_C  # left motor
-        self.speed = 2
+        self.speed = 5
         self.FWD_SCALING = 4.244 * (38 / 42.5) * 1.12 * 1 / 40  # IDK Chief
         self.TURN_SCALING = 1.1 * 2 / math.pi
         self.driver = MotorDriver(self.motorL, self.motorR, self.speed)

@@ -150,6 +150,13 @@ try:
             drift_left(speed)
         elif inp == "e":
             drift_right(speed)
+        
+        elif inp == "p":
+            speed += 5
+            print(speed)
+        elif inp == "l":
+            speed -= 5
+            print(speed)
         time.sleep(0.01)  # sleep for 10 ms
 except KeyboardInterrupt:
     BP.reset_all()
